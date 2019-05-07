@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ComputeCartographicCS.glsl</file>
+        <file>ProjectImageryFS.glsl</file>
+    </qresource>
+</RCC>

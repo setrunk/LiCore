@@ -1,0 +1,1 @@
+CassiniDev.exe /a:C:\Users\apple\Documents\Projects\LiEngine\src\globe_cpp\新建文件夹\Source\Assets\Textures\NaturalEarthII /pm:Specific /p:7610
