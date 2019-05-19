@@ -22,6 +22,7 @@ class VertexArray;
 class LiRenderState;
 class RenderStateSet;
 class LiTexture;
+class LiFlattenMask;
 
 /**
  * @brief
@@ -193,6 +194,10 @@ public:
     void addDrawCommandsForTile(QuadtreeTile *tile, FrameState *frameState);
 
     /**
+     */
+    void flattenTerrain(LiFlattenMask *mask);
+
+    /**
      * @brief
      *
      */
@@ -241,6 +246,10 @@ public slots:
      * @param show
      */
     void onLayerShownOrHidden(ImageryLayer *layer, int index, bool show);
+
+    void onFlattenMaskAdded(LiFlattenMask *mask);
+
+    void onFlattenMaskRemoved(LiFlattenMask *mask);
 
 private:
     /**

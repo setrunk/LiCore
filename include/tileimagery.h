@@ -42,12 +42,6 @@ public:
      * @return Imagery
      */
     Imagery *loadingImagery() const { return _loadingImagery; }
-    /**
-     * @brief
-     *
-     * @param loadingImagery
-     */
-    void setLoadingImagery(Imagery *loadingImagery);
 
     /**
      * @brief
@@ -55,12 +49,6 @@ public:
      * @return Imagery
      */
     Imagery *readyImagery() const { return _readyImagery; }
-    /**
-     * @brief
-     *
-     * @param readyImagery
-     */
-    void setReadyImagery(Imagery *readyImagery);
 
     /**
      * @brief
@@ -68,6 +56,7 @@ public:
      * @return Cartesian4
      */
     Cartesian4 textureTranslationAndScale() const { return _textureTranslationAndScale; }
+
     /**
      * @brief
      *
@@ -86,6 +75,7 @@ public:
      *
      */
     void freeResources();
+
     /**
      * @brief
      *

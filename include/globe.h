@@ -10,6 +10,7 @@ class TerrainProvider;
 class ImageryLayer;
 class ImageryLayerCollection;
 class TerrainSurfaceLayer;
+class LiFlattenMask;
 class GlobePrivate;
 
 /**
@@ -104,6 +105,10 @@ public:
      * @param imageryLayer
      */
     void addImageryLayer(ImageryLayer *imageryLayer);
+
+    void addFlattenMask(LiFlattenMask *mask);
+    void removeFlattenMask(LiFlattenMask *mask);
+    QVector<LiFlattenMask *> flattenMasks() const;
 
     /**
      * @brief
@@ -205,6 +210,8 @@ public:
 
 signals:
     void showChanged();
+    void flattenMaskAdded(LiFlattenMask *mask);
+    void flattenMaskRemoved(LiFlattenMask *mask);
 
 private:
     Q_DECLARE_PRIVATE(Globe)

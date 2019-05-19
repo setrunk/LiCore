@@ -66,7 +66,8 @@ HEADERS += \
     liprovidermanager.h \
     lipluginimageryprovider.h \
     liproviderinterface.h \
-    qgsmapprojection.h
+    qgsmapprojection.h \
+    pmtscapabilities.h
 
 SOURCES += \
     arcgistilingscheme.cpp \
@@ -79,7 +80,8 @@ SOURCES += \
     liheatmaplayer.cpp \
     liprovidermanager.cpp \
     lipluginimageryprovider.cpp \
-    qgsmapprojection.cpp
+    qgsmapprojection.cpp \
+    pmtscapabilities.cpp
 
 RESOURCES += \
     extras.qrc

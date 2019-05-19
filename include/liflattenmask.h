@@ -4,6 +4,7 @@
 #include "linode.h"
 #include "vector3.h"
 #include "cartographic.h"
+#include "rectangle.h"
 
 class LiFlattenMaskPrivate;
 
@@ -16,8 +17,18 @@ public:
     QVector<Vector3> points() const;
     void setPoints(const QVector<Vector3> &points);
 
+    double maskHeight() const;
+    void setMaskHeight(double maskHeight);
+
+    LiRectangle extent() const;
+    QVector<Cartographic> cartographicPositions() const;
+
+    bool showDebugOutline() const;
+    void setShowDebugOutline(bool show);
+
 signals:
     void pointsChanged();
+    void maskHeightChanged(double height);
 
 public slots:
     /**

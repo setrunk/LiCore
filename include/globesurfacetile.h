@@ -7,6 +7,7 @@
 #include "orientedboundingbox.h"
 #include "tileboundingbox.h"
 #include "boundingvolume.h"
+#include "nodeconnections.h"
 #include "ray.h"
 
 class FrameState;
@@ -18,7 +19,9 @@ class TileImagery;
 class Imagery;
 class ImageryLayerCollection;
 class VertexArray;
+class TerrainMesh;
 class LiTexture;
+class LiFlattenMask;
 class GlobeSurfaceTileProvider;
 
 class LICORE_EXPORT GlobeSurfaceTile
@@ -30,6 +33,9 @@ public:
 
     QSharedPointer<TerrainData> terrainData() const { return _terrainData; }
     QSharedPointer<VertexArray> vertexArray() const { return _vertexArray; }
+    QSharedPointer<TerrainMesh> terrainMesh() const { return _terrainMesh; }
+
+    void setTerrainMesh(const QSharedPointer<TerrainMesh> &terrainMesh);
 
     QVector<TileImagery *> imagery() const { return _imagery; }
     void insertImagery(int insertPoint, TileImagery *imagery);
@@ -68,6 +74,8 @@ public:
                                     TerrainProvider *terrainProvider,
                                     ImageryLayerCollection *imageryLayerCollection);
 
+    void processFlattenMasks(QuadtreeTile *tile);
+
     static void processTerrainStateMachine(QuadtreeTile *tile,
                                            FrameState *frameState,
                                            TerrainProvider *terrainProvider);
@@ -93,6 +101,13 @@ public:
     bool pick(const Ray &ray, bool cullBackFaces, Cartesian3 *result);
     double getHeight(const Cartographic &position) const;
 
+    void addFlattenMask(QuadtreeTile *tile, LiFlattenMask *mask);
+    void removeFlattenMask(QuadtreeTile *tile, LiFlattenMask *mask);
+    QVector<LiFlattenMask *> flattenMasks() const { return _flattenMasks; }
+    int maskId() const { return _maskId; }
+
+public slots:
+
 private:
     Cartesian3 _center;
     double _minimumHeight;
@@ -103,13 +118,16 @@ private:
     TileTerrain *_upsampledTerrain;
     QSharedPointer<TerrainData> _terrainData;
     QSharedPointer<VertexArray> _vertexArray;
+    QSharedPointer<TerrainMesh> _terrainMesh;
     QVector<TileImagery *> _imagery;
-
     LiTexture *_decalTexture = nullptr;
-
     Cartesian4 _waterMaskTranslationAndScale;
     QSharedPointer<LiTexture> _waterMaskTexture;
     static QSharedPointer<LiTexture> _allWaterTexture;
+
+    int _maskId = 0;
+    QVector<LiFlattenMask *> _flattenMasks;
+    NodeConnections _connections;
 };
 
 #endif // GLOBESURFACETILE_H

@@ -8,7 +8,6 @@
 
 class TileTerrain;
 class TilingScheme;
-class TerrainMesh;
 
 class LICORE_EXPORT TerrainData
 {
@@ -28,6 +27,7 @@ public:
     virtual QFuture<TerrainData*> upsample(TilingScheme *tilingScheme,
                                            int sourceX, int sourceY, int sourceLevel,
                                            int descendantX, int descendantY, int descendantLevel) = 0;
+
 };
 
 typedef QSharedPointer<TerrainData> TerrainDataPtr;

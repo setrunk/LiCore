@@ -301,7 +301,7 @@ void highlightTileset(Li3DTileset *tileset)
                     LiMaterial *m = r->material();
                     if (m) {
                         m->setBothSided(true);
-                        m->setOpacity(0.5);
+                        m->setOpacity(0.1);
                         m->renderState()->setBlendFuncSourceRgb(LiRenderState::SourceAlpha);
                         m->renderState()->setBlendFuncSourceAlpha(LiRenderState::SourceAlpha);
                         m->renderState()->setBlendFuncDestRgb(LiRenderState::One);
@@ -387,7 +387,7 @@ void load3DTileset(LiScene *scene)
         flytoTileset(tileset);
 //        flattenMaskTileset(tileset);
 //        moveTilesetByMouse(tileset);
-//        highlightTileset(tileset);
+        highlightTileset(tileset);
     }
 
     // dalang
@@ -636,18 +636,7 @@ void raycast(LiScene *scene)
         if (scene->raycast(ray, &hit))
         {
             auto s2 = getTimestamp();
-            qDebug() << "raycast: distance:" << hit.distance() << ", point:" << hit.point() << "time:" << (s2-s1);
-
-            Cartographic cart;
-            if (hit.entity())
-            {
-                cart = hit.entity()->transform()->cartographic().toDegrees();
-            }
-            else
-            {
-                cart = Cartographic::fromCartesian(hit.point()).toDegrees();
-            }
-            qDebug() << "cart:" << cart.longitude << cart.latitude;
+            qDebug() << "ray cast point:" << hit.point().x() << hit.point().y() << hit.point().z();
         }
     });
 }
@@ -1171,7 +1160,7 @@ void controlTime()
 
 #include "lipluginimageryprovider.h"
 
-void loadWms()
+void loadWMS()
 {
     // arcgis server
     if (1)
@@ -1204,4 +1193,74 @@ void loadWms()
         auto imageryLayer = new ImageryLayer(provider);
         GlobalViewer()->scene()->globe()->addImageryLayer(imageryLayer);
     }
+}
+
+#include "pmtscapabilities.h"
+
+void loadPMTS()
+{
+    QString url("http://3ddatapublishgataway.pnr.test/freeserver-pmts/services/share/f1d216a3-4c09-4ba0-9f75-4f0725e732dc/pmts/1.1.0/PMTSCapabilities.json?accesskey=083e7233-a73e-4f68-a7da-e7252d5913aa");
+
+    PMTSCapabilities *pmts = new PMTSCapabilities(url);
+    observe(pmts->readyPromise()).subscribe([=] {
+        const auto modelUrls = pmts->modelUrls();
+        for (const auto &url : modelUrls) {
+//            qDebug() << url;
+            auto tileset = new Li3DTileset(url);
+            tileset->setClampedTerrain(false);
+            auto entity = new LiEntity();
+            entity->addComponent(tileset);
+            GlobalViewer()->scene()->addEntity(entity);
+        }
+        delete pmts;
+    }, [=] {
+        delete pmts;
+        qDebug() << "Failed to load:" << url;
+    });
+}
+
+void flattenTerrain()
+{
+    QVector<Vector3> points;
+    points << Vector3(-2.40054e+06, 5.38009e+06, 2.43593e+06)
+           << Vector3(-2.40191e+06, 5.38055e+06, 2.43345e+06)
+           << Vector3(-2.40035e+06, 5.38154e+06, 2.43278e+06)
+           << Vector3(-2.39851e+06, 5.38116e+06, 2.43558e+06);
+
+    QVector<Vector3> points2;
+    points2 << Vector3(-2.40183e+06, 5.38015e+06, 2.43432e+06)
+            << Vector3(-2.40262e+06, 5.37885e+06, 2.43638e+06)
+            << Vector3(-2.40417e+06, 5.37882e+06, 2.43494e+06)
+            << Vector3(-2.40529e+06, 5.3784e+06, 2.43477e+06)
+            << Vector3(-2.40488e+06, 5.37923e+06, 2.43334e+06)
+            << Vector3(-2.40354e+06, 5.37956e+06, 2.43393e+06);
+
+    auto mask = new LiFlattenMask;
+    mask->setPoints(points);
+    mask->setMaskHeight(30);
+    mask->setShowDebugOutline(true);
+
+    auto mask2 = new LiFlattenMask;
+    mask2->setPoints(points2);
+    mask2->setMaskHeight(-50);
+    mask2->setShowDebugOutline(true);
+
+    LiInputSystem *input = GlobalViewer()->engine()->inputSystem();
+    QObject::connect(input, &LiInputSystem::keyDown, [=](int key) {
+        if (key == Qt::Key_PageDown) {
+            mask->setMaskHeight(mask->maskHeight() - 10);
+        }
+        if (key == Qt::Key_PageUp) {
+            mask->setMaskHeight(mask->maskHeight() + 10);
+        }
+        if (key == Qt::Key_F1) {
+            mask->setEnabled(!mask->isEnabled());
+        }
+        if (key == Qt::Key_F2) {
+            mask2->setEnabled(!mask2->isEnabled());
+        }
+    });
+
+    GlobalViewer()->scene()->globe()->addFlattenMask(mask);
+    GlobalViewer()->scene()->globe()->addFlattenMask(mask2);
 }

@@ -46,7 +46,7 @@ public:
      * @param parentLevel
      * @param parentData
      */
-    TileTerrain(int parentX, int parentY, int parentLevel, QSharedPointer<TerrainData> parentData);
+    TileTerrain(int parentX, int parentY, int parentLevel, const QSharedPointer<TerrainData> &parentData);
     /**
      * @brief
      *

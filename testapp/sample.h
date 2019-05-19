@@ -35,6 +35,8 @@ void createClipVolume(LiScene *scene);
 void createWaterMaterial(LiScene *scene);
 void controlTime();
 
-void loadWms();
+void loadWMS();
+void loadPMTS();
+void flattenTerrain();
 
 #endif // SAMPLE_H

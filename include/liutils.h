@@ -89,6 +89,17 @@ inline QUrl resolvedQueryUrl(const QUrl &baseUrl, const QUrl &url)
     return result;
 }
 
+inline QUrl toUrl(const QString &str)
+{
+    if (!str.startsWith(QLatin1String("http"), Qt::CaseInsensitive) &&
+        !str.startsWith(QLatin1String("file:"), Qt::CaseInsensitive))
+    {
+        return QUrl(QStringLiteral("file:///") + str);
+    }
+
+    return QUrl(str);
+}
+
 inline QUrl getBaseUrl(const QUrl &url)
 {
     static QUrl a = QUrl("./");
