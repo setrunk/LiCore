@@ -269,7 +269,11 @@ private:
      * @param decal
      * @return LiShaderProgram
      */
-    LiShaderProgram *getShaderProgramFromCache(int textureLen, bool quantization, bool showReflectiveOcean, bool decal);
+    LiShaderProgram *getShaderProgramFromCache(int textureLen,
+                                               bool quantization,
+                                               bool showReflectiveOcean,
+                                               bool decal,
+                                               bool alpha);
     /**
      * @brief
      *

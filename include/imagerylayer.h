@@ -80,6 +80,7 @@ public:
      * @return float
      */
     float alpha() const { return _alpha; }
+    void setAlpha(float alpha) { _alpha = alpha; }
 
     /**
      * @brief
@@ -201,7 +202,7 @@ private:
     int _minimumTerrainLevel; /**< TODO: describe */
     int _maximumTerrainLevel; /**< TODO: describe */
     LiRectangle _rectangle; /**< TODO: describe */
-    float _alpha; /**< TODO: describe */
+    float _alpha = 1.0f; /**< TODO: describe */
     float _brightness; /**< TODO: describe */
     float _contrast; /**< TODO: describe */
     float _hue; /**< TODO: describe */

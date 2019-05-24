@@ -66,6 +66,8 @@ public:
     LiTexture *decalTexture() const { return _decalTexture; }
     void setDecalTexture(LiTexture *decal) { _decalTexture = decal; }
 
+    bool isTerrainMeshReady() const;
+
     static void createWaterMaskTextureIfNeeded(GlobeSurfaceTile *surfaceTile);
     static void upsampleWaterMask(QuadtreeTile *tile);
 
