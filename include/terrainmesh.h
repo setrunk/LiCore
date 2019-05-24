@@ -46,10 +46,11 @@ public:
         QByteArray indexData;
         int vertexCountWithoutSkirts = 0;
         int indexCountWithoutSkirts = 0;
+        BoundingVolume boundingVolume;
     };
     MeshData loadedData;
 
-    void doFlatten(const LiRectangle &rectangle, const QVector<FlattenMaskDataPtr> &flattenMasks);
+    MeshData *doFlatten(const LiRectangle &rectangle, const QVector<FlattenMaskDataPtr> &flattenMasks);
     void onAddedFlattenMask(LiFlattenMask *mask);
     void onRemovedFlattenMask(LiFlattenMask *mask);
     void addSkirt(float *vbuffer,
@@ -58,6 +59,7 @@ public:
                   int &indexBufferIndex,
                   const QVector<quint16> &edgeVertices,
                   const QVector<QPointF> &uvs,
+                  const QVector<double> &heights,
                   const LiRectangle &rectangle,
                   double skirtLength,
                   bool isWestOrNorthEdge,
@@ -70,6 +72,7 @@ public:
         loadedData.vertexCountWithoutSkirts = vertexCountWithoutSkirts;
         loadedData.indexData = indexData;
         loadedData.indexCountWithoutSkirts = indexCountWithoutSkirts;
+        loadedData.boundingVolume = boundingVolume;
     }
 
     Cartesian3 center;
