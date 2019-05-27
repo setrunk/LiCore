@@ -40,6 +40,19 @@ public:
     };
     typedef QSharedPointer<FlattenMaskData> FlattenMaskDataPtr;
 
+    struct FlattenParameters
+    {
+        LiRectangle rectangle;
+        QByteArray vertexData;
+        QByteArray indexData;
+        int vertexCountWithoutSkirts = 0;
+        int indexCountWithoutSkirts = 0;
+        double minimumHeight = 0;
+        double maximumHeight = 0;
+        QSharedPointer<TerrainEncoding> encoding;
+        QVector<FlattenMaskDataPtr> flattenMasks;
+    };
+
     struct MeshData
     {
         QByteArray vertexData;
@@ -50,21 +63,19 @@ public:
     };
     MeshData loadedData;
 
-    MeshData *doFlatten(const LiRectangle &rectangle, const QVector<FlattenMaskDataPtr> &flattenMasks);
-    void onAddedFlattenMask(LiFlattenMask *mask);
-    void onRemovedFlattenMask(LiFlattenMask *mask);
-    void addSkirt(float *vbuffer,
-                  int &vertexBufferIndex,
-                  quint16 *ibuffer,
-                  int &indexBufferIndex,
-                  const QVector<quint16> &edgeVertices,
-                  const QVector<QPointF> &uvs,
-                  const QVector<double> &heights,
-                  const LiRectangle &rectangle,
-                  double skirtLength,
-                  bool isWestOrNorthEdge,
-                  double southMercatorY,
-                  double oneOverMercatorHeight);
+//    MeshData *doFlatten(const LiRectangle &rectangle, const QVector<FlattenMaskDataPtr> &flattenMasks);
+//    void addSkirt(float *vbuffer,
+//                  int &vertexBufferIndex,
+//                  quint16 *ibuffer,
+//                  int &indexBufferIndex,
+//                  const QVector<quint16> &edgeVertices,
+//                  const QVector<QPointF> &uvs,
+//                  const QVector<double> &heights,
+//                  const LiRectangle &rectangle,
+//                  double skirtLength,
+//                  bool isWestOrNorthEdge,
+//                  double southMercatorY,
+//                  double oneOverMercatorHeight);
 
     void saveLoadedData()
     {

@@ -82,6 +82,21 @@ public:
     float alpha() const { return _alpha; }
     void setAlpha(float alpha) { _alpha = alpha; }
 
+    float brightness() const { return _brightness; }
+    void setBrightness(float brightness) { _brightness = brightness; }
+
+    float contrast() const { return _contrast; }
+    void setContrast(float contrast) { _contrast = contrast; }
+
+    float hue() const { return _hue; }
+    void setHue(float hue) { _hue = hue; }
+
+    float saturation() const { return _saturation; }
+    void setSaturation(float saturation) { _saturation = saturation; }
+
+    float gamma() const { return _gamma; }
+    void setGamma(float gamma) { _gamma = gamma; }
+
     /**
      * @brief
      * 请求影像切片操作，由于优先级的关系，请求不一定会成功
@@ -187,6 +202,12 @@ public:
      */
     Cartesian4 calculateTextureTranslationAndScale(QuadtreeTile *tile, TileImagery *tileImagery);
 
+    static float DEFAULT_BRIGHTNESS;
+    static float DEFAULT_CONTRAST;
+    static float DEFAULT_HUE;
+    static float DEFAULT_SATURATION;
+    static float DEFAULT_GAMMA;
+
 signals:
     void layerShownOrHidden(ImageryLayer *layer, int index, bool show);
 
@@ -203,11 +224,11 @@ private:
     int _maximumTerrainLevel; /**< TODO: describe */
     LiRectangle _rectangle; /**< TODO: describe */
     float _alpha = 1.0f; /**< TODO: describe */
-    float _brightness; /**< TODO: describe */
-    float _contrast; /**< TODO: describe */
-    float _hue; /**< TODO: describe */
-    float _saturation; /**< TODO: describe */
-    float _gamma; /**< TODO: describe */
+    float _brightness = 1.f; /**< TODO: describe */
+    float _contrast = 1.f; /**< TODO: describe */
+    float _hue = 0.f; /**< TODO: describe */
+    float _saturation = 1.f; /**< TODO: describe */
+    float _gamma = 1.f; /**< TODO: describe */
     SplitDirection _splitDirection; /**< TODO: describe */
     TileImagery *_skeletonPlaceholder; /**< TODO: describe */
     QHash<QString, Imagery *> _imageryCache; /**< TODO: describe */

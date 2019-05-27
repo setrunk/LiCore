@@ -243,11 +243,13 @@ int QgsWmsProvider::getNumberOfXTilesAtLevel(int level) const
     if (level >= m_lodEntries.size())
         return 2 << level;
 
-    double res = getResolution(level);
-    double cols = this->extent().width() / res;
-    int tiles = ceil(cols / m_lodEntries[level].tm->tileWidth);
+    return m_lodEntries.at(level).tm->matrixWidth;
 
-    return tiles;
+//    double res = getResolution(level);
+//    double cols = this->extent().width() / res;
+//    int tiles = ceil(cols / m_lodEntries[level].tm->tileWidth);
+
+//    return tiles;
 }
 
 int QgsWmsProvider::getNumberOfYTilesAtLevel(int level) const
@@ -258,18 +260,17 @@ int QgsWmsProvider::getNumberOfYTilesAtLevel(int level) const
     if (level >= m_lodEntries.size())
         return 1 << level;
 
-    double res = getResolution(level);
-    double cols = this->extent().height() / res;
-    int tiles = ceil(cols / m_lodEntries[level].tm->tileHeight);
+    return m_lodEntries.at(level).tm->matrixHeight;
 
-    return tiles;
+//    double res = getResolution(level);
+//    double cols = this->extent().height() / res;
+//    int tiles = ceil(cols / m_lodEntries[level].tm->tileHeight);
+
+//    return tiles;
 }
 
 LiRectangle QgsWmsProvider::tileXYToRectangle(int x, int y, int level) const
 {
-    if (level < m_lodEntries.size()) {
-        return toRectangle(computeTileExtent(x, y, level)).toRadians();
-    }
     return toWgs84(toRectangle(tileXYToNativeRectangle(x, y, level)));
 }
 
@@ -302,10 +303,6 @@ LiRectangle QgsWmsProvider::rectangleToNativeRectangle(const LiRectangle &rectan
 
 Cartesian2 QgsWmsProvider::positionToTileXY(const Cartographic &position, int level) const
 {
-    // outside the bounds of the tiling scheme
-    if (!mExtent84.contains(position))
-        return Cartesian2();
-
     if (level >= m_lodEntries.size())
     {
         int xTiles = getNumberOfXTilesAtLevel(level);
@@ -333,6 +330,9 @@ Cartesian2 QgsWmsProvider::positionToTileXY(const Cartographic &position, int le
 
     int tx = (pos.x - ox) / spaceX;
     int ty = (oy - pos.y) / spaceY;
+
+    tx = qBound(0, tx, tm->matrixWidth-1);
+    ty = qBound(0, ty, tm->matrixHeight-1);
 
     return Cartesian2(tx, ty);
 }
@@ -362,7 +362,7 @@ int QgsWmsProvider::computeLevel(const LiRectangle &rectangle) const
     if (!isTiled() || mSettings.mXyz)
         return -1;
 
-    int level = 0;
+    int level = m_lodEntries.size() - 1;
 
     LiRectangle rc = mTilingScheme->rectangleToNativeRectangle(rectangle);
     double w = rc.width();

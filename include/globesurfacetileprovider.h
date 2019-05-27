@@ -272,8 +272,12 @@ private:
     LiShaderProgram *getShaderProgramFromCache(int textureLen,
                                                bool quantization,
                                                bool showReflectiveOcean,
-                                               bool decal,
-                                               bool alpha);
+                                               bool applyAlpha,
+                                               bool applyBrightness,
+                                               bool applyContrast,
+                                               bool applyHue,
+                                               bool applySaturation,
+                                               bool applyGamma);
     /**
      * @brief
      *
