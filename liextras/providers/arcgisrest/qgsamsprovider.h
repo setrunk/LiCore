@@ -23,6 +23,7 @@
 #include "qgscoordinatereferencesystem.h"
 #include "tilingscheme.h"
 #include "liproviderinterface.h"
+#include "qgsmapprojection.h"
 
 class QgsArcGisAsyncQuery;
 class QgsAmsProvider;
@@ -91,6 +92,7 @@ public:
     QgsRasterIdentifyResult identify( const QgsPointXY &point, QgsRaster::IdentifyFormat format, const QgsRectangle &extent = QgsRectangle(), int width = 0, int height = 0, int dpi = 96 ) override;
 
     // tiling scheme
+    bool isGeographic() const { return !mMapProjection->useWebMercator(); }
     TilingScheme *tilingScheme() { return mTilingScheme; }
     int getNumberOfXTilesAtLevel(int level) const;
     int getNumberOfYTilesAtLevel(int level) const;
@@ -118,8 +120,6 @@ protected:
 
 private:
     double getResolution(int level) const;
-    LiRectangle toNative(const QgsRectangle &r) const;
-    LiRectangle toWgs84(const QgsRectangle &r) const;
 
     struct LodEntry
     {
@@ -160,7 +160,7 @@ private:
     QString mError;
     QImage mCachedImage;
     QgsRectangle mCachedImageExtent;
-    QSharedPointer<MapProjection> mMapProjection;
+    QSharedPointer<QgsMapProjection> mMapProjection;
 };
 
 #endif // QGSMAPSERVERPROVIDER_H

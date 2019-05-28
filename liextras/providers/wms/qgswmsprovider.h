@@ -35,6 +35,7 @@
 
 #include "tilingscheme.h"
 #include "liproviderinterface.h"
+#include "qgsmapprojection.h"
 
 class QgsCoordinateTransform;
 class QgsNetworkAccessManager;
@@ -162,6 +163,7 @@ public:
     bool isValid() const override;
 
     // tiling scheme
+    bool isGeographic() const { return !mMapProjection->useWebMercator(); }
     TilingScheme *tilingScheme() { return mTilingScheme; }
     int getNumberOfXTilesAtLevel(int level) const;
     int getNumberOfYTilesAtLevel(int level) const;
@@ -185,8 +187,6 @@ public:
     bool isXyzTiles() const;
 
     double getResolution(int level) const;
-    LiRectangle toNative(const QgsRectangle &r) const;
-    LiRectangle toWgs84(const QgsRectangle &r) const;
 
 #if 0
 
@@ -512,7 +512,7 @@ private:
     QgsWmsSettings mSettings;
 
     TilingScheme *mTilingScheme;
-    QSharedPointer<MapProjection> mMapProjection;
+    QSharedPointer<QgsMapProjection> mMapProjection;
 };
 
 

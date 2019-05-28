@@ -192,7 +192,7 @@ void GisImageryProvider::addLayer(QgsMapLayer *layer)
 
         _layers.append(layer);
 
-        LiRectangle rectangle = TransformHelper::instance()->transform(layer->extent(), &layer->crs());
+        LiRectangle rectangle = TransformHelper::instance()->toWgs84(layer->extent(), &layer->crs());
 
         connect(layer, &QgsMapLayer::repaintRequested, this, [this, rectangle] {
             repaint(rectangle, false);
@@ -222,15 +222,15 @@ void GisImageryProvider::removeLayer(QgsMapLayer *layer)
         if (_layers.size())
         {
             auto l = _layers.first();
-            _extent = TransformHelper::instance()->transform(l->extent(), &l->crs());
+            _extent = TransformHelper::instance()->toWgs84(l->extent(), &l->crs());
         }
         for (int i = 1; i < _layers.size(); ++i)
         {
             auto l = _layers.at(i);
-            _extent.combine(TransformHelper::instance()->transform(l->extent(), &l->crs()));
+            _extent.combine(TransformHelper::instance()->toWgs84(l->extent(), &l->crs()));
         }
 
-        LiRectangle rect = TransformHelper::instance()->transform(layer->extent(), &layer->crs());
+        LiRectangle rect = TransformHelper::instance()->toWgs84(layer->extent(), &layer->crs());
         repaint(rect, false);
     }
 }

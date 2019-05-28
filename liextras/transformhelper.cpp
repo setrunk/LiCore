@@ -49,41 +49,44 @@ QgsCoordinateTransform *TransformHelper::crsTransfrom(const QgsCoordinateReferen
     return transform;
 }
 
-Cartographic TransformHelper::transform(double x, double y, const QgsCoordinateReferenceSystem * crs, bool forward)
+Cartographic TransformHelper::toWgs84(double x, double y, const QgsCoordinateReferenceSystem *crs)
 {
-    QgsCoordinateTransform *t = crsTransfrom(crs);
-    if (!t)
-        return Cartographic();
+    Cartographic result;
 
-    QgsPointXY p = t->transform(x, y, forward ? QgsCoordinateTransform::ForwardTransform : QgsCoordinateTransform::ReverseTransform);
-    double lon = forward ? qDegreesToRadians(p.x()) : p.x();
-    double lat = forward ? qDegreesToRadians(p.y()) : p.y();
-
-    return Cartographic(lon, lat);
-}
-
-LiRectangle TransformHelper::transform(const QgsRectangle &extent, const QgsCoordinateReferenceSystem * crs, bool forward)
-{
-    QgsRectangle rect;
     QgsCoordinateTransform *t = crsTransfrom(crs);
     if (t)
     {
-        rect = t->transform(extent, forward ? QgsCoordinateTransform::ForwardTransform : QgsCoordinateTransform::ReverseTransform);
-    }
-    else
-    {
-        rect = extent;
+        QgsPointXY p = t->transform(x, y, QgsCoordinateTransform::ForwardTransform);
+        result.longitude = qDegreesToRadians(p.x());
+        result.latitude = qDegreesToRadians(p.y());
     }
 
-    LiRectangle result(rect.xMinimum(),
-                       rect.yMinimum(),
-                       rect.xMaximum(),
-                       rect.yMaximum());
-
-    return forward ? result.toRadians() : result;
+    return result;
 }
 
-LiRectangle TransformHelper::transform(const LiRectangle &extent, const QgsCoordinateReferenceSystem *crs, bool forward)
+QgsPointXY TransformHelper::toNative(const Cartographic &p, const QgsCoordinateReferenceSystem *crs)
 {
-    return transform(toRectangle(extent), crs, forward);
+    QgsPointXY result;
+
+    QgsCoordinateTransform *t = crsTransfrom(crs);
+    if (t)
+    {
+        result = t->transform(qRadiansToDegrees(p.longitude), qRadiansToDegrees(p.latitude), QgsCoordinateTransform::ReverseTransform);
+    }
+
+    return result;
+}
+
+LiRectangle TransformHelper::toWgs84(const QgsRectangle &extent, const QgsCoordinateReferenceSystem *crs)
+{
+    auto pMin = toWgs84(extent.xMinimum(), extent.yMinimum(), crs);
+    auto pMax = toWgs84(extent.xMaximum(), extent.yMaximum(), crs);
+    return LiRectangle(pMin.longitude, pMin.latitude, pMax.longitude, pMax.latitude);
+}
+
+QgsRectangle TransformHelper::toNative(const LiRectangle &extent, const QgsCoordinateReferenceSystem *crs)
+{
+    auto pMin = toNative(extent.southwest(), crs);
+    auto pMax = toNative(extent.northeast(), crs);
+    return QgsRectangle(pMin, pMax);
 }

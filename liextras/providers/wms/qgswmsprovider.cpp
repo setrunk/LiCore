@@ -48,11 +48,6 @@
 #include "qgssettings.h"
 #include "qgsogrutils.h"
 
-#include "transformhelper.h"
-#include "qgsmapprojection.h"
-#include "webmercatortilingscheme.h"
-#include "webmercatorprojection.h"
-
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QNetworkProxy>
@@ -159,18 +154,9 @@ QgsWmsProvider::QgsWmsProvider( QString const &uri, const ProviderOptions &optio
         return;
     }
 
-    if (mCrs.authid() == QLatin1String("EPSG:3857"))
-    {
-        mTilingScheme = new WebMercatorTilingScheme();
-        mMapProjection.reset(new WebMercatorProjection());
-    }
-    else
-    {
-        mTilingScheme = this;
-        mMapProjection.reset( new QgsMapProjection(mCrs) );
-    }
-
-    mExtent84 = toWgs84(this->extent());
+    mTilingScheme = this;
+    mMapProjection.reset( new QgsMapProjection(mCrs) );
+    mExtent84 = mMapProjection->toWgs84(this->extent());
 
     if (mTileMatrixSet)
     {
@@ -271,13 +257,13 @@ int QgsWmsProvider::getNumberOfYTilesAtLevel(int level) const
 
 LiRectangle QgsWmsProvider::tileXYToRectangle(int x, int y, int level) const
 {
-    return toWgs84(toRectangle(tileXYToNativeRectangle(x, y, level)));
+    return mMapProjection->toWgs84(toRectangle(tileXYToNativeRectangle(x, y, level)));
 }
 
 LiRectangle QgsWmsProvider::tileXYToNativeRectangle(int x, int y, int level) const
 {
     if (level >= m_lodEntries.size()) {
-        return toNative(computeTileExtent(x, y, level));
+        return toRectangle(mMapProjection->toNative(computeTileExtent(x, y, level)));
     }
 
     auto tm = m_lodEntries[level].tm;
@@ -298,7 +284,7 @@ LiRectangle QgsWmsProvider::tileXYToNativeRectangle(int x, int y, int level) con
 
 LiRectangle QgsWmsProvider::rectangleToNativeRectangle(const LiRectangle &rectangle) const
 {
-    return toNative(toRectangle(rectangle.toDegrees()));
+    return toRectangle(mMapProjection->toNative(rectangle));
 }
 
 Cartesian2 QgsWmsProvider::positionToTileXY(const Cartographic &position, int level) const
@@ -414,9 +400,8 @@ QUrl QgsWmsProvider::getTileUrl(int x, int y, int level)
     if (!isTiled())
     {
         auto tileExtent = computeTileExtent(x, y, level);
-        auto nativeExtent = toNative(tileExtent);
-        auto viewExtent = toRectangle(nativeExtent);
-        return createRequestUrlWMS(viewExtent, tileWidth(), tileHeight());
+        auto nativeExtent = mMapProjection->toNative(tileExtent);
+        return createRequestUrlWMS(nativeExtent, tileWidth(), tileHeight());
     }
 
     QUrl url;
@@ -480,17 +465,6 @@ double QgsWmsProvider::getResolution(int level) const
 {
     return level < m_lodEntries.size() ? m_lodEntries[level].resolution : 0;
 }
-
-LiRectangle QgsWmsProvider::toNative(const QgsRectangle &r) const
-{
-    return TransformHelper::instance()->transform(r, &mCrs, false);
-}
-
-LiRectangle QgsWmsProvider::toWgs84(const QgsRectangle &r) const
-{
-    return TransformHelper::instance()->transform(r, &mCrs, true);
-}
-
 
 QString QgsWmsProvider::getMapUrl() const
 {

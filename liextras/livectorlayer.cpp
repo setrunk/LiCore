@@ -9,9 +9,7 @@ LiVectorLayer::LiVectorLayer(QgsVectorLayer *layer, QObject *parent)
 {
     if (layer)
     {
-        _extent = layer->extent();
-        qDebug() << layer->crs().authid();
-        _rectangle = TransformHelper::instance()->transform(_extent, &layer->crs());
+        _rectangle = TransformHelper::instance()->toWgs84(layer->extent(), &layer->crs());
     }
 }
 

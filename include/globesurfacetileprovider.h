@@ -194,10 +194,6 @@ public:
     void addDrawCommandsForTile(QuadtreeTile *tile, FrameState *frameState);
 
     /**
-     */
-    void flattenTerrain(LiFlattenMask *mask);
-
-    /**
      * @brief
      *
      */
@@ -272,6 +268,7 @@ private:
     LiShaderProgram *getShaderProgramFromCache(int textureLen,
                                                bool quantization,
                                                bool showReflectiveOcean,
+                                               bool showDecal,
                                                bool applyAlpha,
                                                bool applyBrightness,
                                                bool applyContrast,

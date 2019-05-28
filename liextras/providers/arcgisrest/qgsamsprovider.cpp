@@ -32,12 +32,6 @@
 #include <QPainter>
 #include <QUrlQuery>
 
-#include "transformhelper.h"
-#include "mapprojection.h"
-#include "webmercatortilingscheme.h"
-#include "webmercatorprojection.h"
-#include "qgsmapprojection.h"
-
 QgsAmsLegendFetcher::QgsAmsLegendFetcher( QgsAmsProvider *provider )
     : QgsImageFetcher( provider ), mProvider( provider )
 {
@@ -154,18 +148,9 @@ QgsAmsProvider::QgsAmsProvider( const QString &uri, const ProviderOptions &optio
         mSubLayerVisibilities.append( true );
     }
 
-    if (mCrs.authid() == QLatin1String("EPSG:3857"))
-    {
-        mTilingScheme = new WebMercatorTilingScheme();
-        mMapProjection.reset(new WebMercatorProjection());
-    }
-    else
-    {
-        mTilingScheme = this;
-        mMapProjection.reset( new QgsMapProjection(mCrs) );
-    }
-
-    mExtent84 = toWgs84(mExtent);
+    mTilingScheme = this;
+    mMapProjection.reset( new QgsMapProjection(mCrs) );
+    mExtent84 = mMapProjection->toWgs84(mExtent);
 
     // service info
     {
@@ -414,16 +399,6 @@ double QgsAmsProvider::getResolution(int level) const
     return les.first().resolution;
 }
 
-LiRectangle QgsAmsProvider::toNative(const QgsRectangle &r) const
-{
-    return TransformHelper::instance()->transform(r, &mCrs, false);
-}
-
-LiRectangle QgsAmsProvider::toWgs84(const QgsRectangle &r) const
-{
-    return TransformHelper::instance()->transform(r, &mCrs, true);
-}
-
 QImage QgsAmsProvider::getLegendGraphic( double /*scale*/, bool forceRefresh, const QgsRectangle * /*visibleExtent*/ )
 {
     if ( mLegendFetcher->haveImage() && !forceRefresh )
@@ -562,16 +537,13 @@ int QgsAmsProvider::getNumberOfYTilesAtLevel(int level) const
 
 LiRectangle QgsAmsProvider::tileXYToRectangle(int x, int y, int level) const
 {
-    if (!isTiled()) {
-        return toRectangle(computeTileExtent(x, y, level)).toRadians();
-    }
-    return toWgs84(toRectangle(tileXYToNativeRectangle(x, y, level)));
+    return mMapProjection->toWgs84(toRectangle(tileXYToNativeRectangle(x, y, level)));
 }
 
 LiRectangle QgsAmsProvider::tileXYToNativeRectangle(int x, int y, int level) const
 {
     if (!isTiled()) {
-        return toNative(computeTileExtent(x, y, level));
+        return toRectangle(mMapProjection->toNative(computeTileExtent(x, y, level)));
     }
 
     double ox = mInfo.tileInfo.x;
@@ -591,7 +563,7 @@ LiRectangle QgsAmsProvider::tileXYToNativeRectangle(int x, int y, int level) con
 
 LiRectangle QgsAmsProvider::rectangleToNativeRectangle(const LiRectangle &rectangle) const
 {
-    return toNative(toRectangle(rectangle.toDegrees()));
+    return toRectangle(mMapProjection->toNative(rectangle));
 }
 
 Cartesian2 QgsAmsProvider::positionToTileXY(const Cartographic &position, int level) const
@@ -681,7 +653,7 @@ QUrl QgsAmsProvider::getTileUrl(int x, int y, int level)
     if (isTiled())
         return QUrl( mInfo.url + QStringLiteral( "/tile/%1/%2/%3" ).arg( level ).arg( y ).arg( x ) );
 
-    QgsRectangle viewExtent = toRectangle(toNative(computeTileExtent(x, y, level)));
+    QgsRectangle viewExtent = mMapProjection->toNative(computeTileExtent(x, y, level));
     QgsDataSourceUri dataSource( dataSourceUri() );
     QUrl url( dataSource.param( QStringLiteral( "url" ) ) + "/export" );
     QUrlQuery query;

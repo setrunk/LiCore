@@ -25,7 +25,8 @@ public:
     State state() const { return _state; }
     QgsVectorLayer *vectorLayer() const { return _vectorLayer; }
     LiRectangle rectangle() const { return _rectangle; }
-    QgsRectangle extent() const { return _extent; }
+    QgsRectangle extent() const { return _vectorLayer->extent(); }
+    QgsCoordinateReferenceSystem crs() const { return _vectorLayer->crs(); }
 
     bool startStreaming();
     void stopStreaming();
@@ -45,7 +46,6 @@ protected:
     QAtomicInt _streaming;
     QAtomicInt _running;
     QgsVectorLayer *_vectorLayer;
-    QgsRectangle _extent;
     LiRectangle _rectangle;
     QStringList _attributeList;
     QgsRectangle _desiredExtent;

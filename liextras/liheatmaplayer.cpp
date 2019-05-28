@@ -16,7 +16,7 @@ void LiHeatmapLayer::load(QgsVectorLayer *vectorLayer)
         return;
 
     m_vectorLayer = new LiVectorLayer(vectorLayer, this);
-    m_rectangle = TransformHelper::instance()->transform(vectorLayer->extent(), &vectorLayer->crs());
+    m_rectangle = m_vectorLayer->rectangle();
     m_center = m_rectangle.center();
 
     QgsFields fields = vectorLayer->fields();
@@ -34,7 +34,7 @@ void LiHeatmapLayer::processFeature(const QgsFeature &feature)
     QgsPointXY *point = (QgsPointXY*)feature.geometry().get();
     double x = point->x();
     double y = point->y();
-    Cartographic cart = TransformHelper::instance()->transform(x, y, &m_vectorLayer->vectorLayer()->crs());
+    Cartographic cart = TransformHelper::instance()->toWgs84(x, y, &m_vectorLayer->crs());
 
     const auto attrs = feature.attributes();
     double value = attrs[m_valueAttrIndex].toDouble();

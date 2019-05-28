@@ -38,8 +38,8 @@ private:
     typedef QVector<Tree> TreeInstances;
 
     LiVectorLayer *m_vectorLayer;
-    Cartographic m_center;
     LiRectangle m_rectangle;
+    Cartographic m_center;
     bool m_autoRotationAndScale = false;
     QHash<QString, TreeInstances> m_instances;
 
