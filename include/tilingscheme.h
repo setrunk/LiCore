@@ -45,11 +45,12 @@ public:
      */
     virtual LiRectangle rectangle() const = 0;
 
-    virtual Cartesian2 origin() const
-    {
-        auto rc = rectangle();
-        return Cartesian2(rc.west, rc.north);
-    }
+    /**
+     * @brief
+     * 返回地图服务的原点位置
+     * @return LiRectangle
+     */
+    virtual Cartesian2 origin() const;
 
     /**
      * @brief

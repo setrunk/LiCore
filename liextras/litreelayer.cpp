@@ -20,17 +20,18 @@ void LiTreeLayer::load(QgsVectorLayer *vectorLayer)
         m_center = m_rectangle.center();
 
         QgsFields fields = vectorLayer->fields();
-        m_nameIndex = fields.indexFromName("name");
-        m_xIndex = fields.indexFromName("X");
-        m_yIndex = fields.indexFromName("Y");
-        m_rotationIndex = fields.indexFromName("rotation");
-        m_scaleIndex = fields.indexFromName("scale");
+        m_nameIndex = fields.lookupField("name");
+        m_xIndex = fields.lookupField("X");
+        m_yIndex = fields.lookupField("Y");
+        m_zIndex = fields.lookupField("Z");
+        m_rotationIndex = fields.lookupField("rotation");
+        m_scaleIndex = fields.lookupField("scale");
 
         connect(m_vectorLayer, &LiVectorLayer::featureLoaded, this, &LiTreeLayer::processFeature, Qt::DirectConnection);
         connect(m_vectorLayer, &LiVectorLayer::completed, this, &LiTreeLayer::completed);
 
         QStringList attrs;
-        attrs << "name" << "X" << "Y";
+        attrs << "name" << "X" << "Y" << "Z";
         if (!m_autoRotationAndScale)
             attrs << "rotation" << "scale";
 
@@ -41,7 +42,7 @@ void LiTreeLayer::load(QgsVectorLayer *vectorLayer)
 
 void LiTreeLayer::processFeature(const QgsFeature &feature)
 {
-    int attrCount = m_autoRotationAndScale ? 3 : 5;
+    int attrCount = m_autoRotationAndScale ? 4 : 6;
     const auto attrs = feature.attributes();
     if (attrs.size() >= attrCount)
     {
@@ -53,6 +54,7 @@ void LiTreeLayer::processFeature(const QgsFeature &feature)
 
         double x = attrs[m_xIndex].toDouble();
         double y = attrs[m_yIndex].toDouble();
+        double z = attrs[m_zIndex].toDouble();
         double rotation;
         double scale;
 
@@ -68,6 +70,7 @@ void LiTreeLayer::processFeature(const QgsFeature &feature)
         }
 
         Cartographic cart = TransformHelper::instance()->toWgs84(x, y, &m_vectorLayer->crs());
+        cart.setHeight(z);
 
         if (m_instances.contains(name))
         {
@@ -95,7 +98,7 @@ void LiTreeLayer::completed()
         auto it = m_instances.cbegin();
         for (; it != m_instances.cend(); ++it)
         {
-            const TreeInstances insts = it.value();
+            const TreeInstances &insts = it.value();
             const int count = insts.size();
 
             QVector<Cartographic> pos(count);

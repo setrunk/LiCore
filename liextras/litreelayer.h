@@ -46,6 +46,7 @@ private:
     int m_nameIndex;
     int m_xIndex;
     int m_yIndex;
+    int m_zIndex;
     int m_rotationIndex;
     int m_scaleIndex;
 };
