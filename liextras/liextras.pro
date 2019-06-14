@@ -28,6 +28,12 @@ win32-msvc*:QMAKE_CXXFLAGS += /wd"4005"
 # Additional import path used to resolve QML modules in Qt Creator's code model
 #QML_IMPORT_PATH =
 
+LIBS += -L$$PWD/../../OSGeo4W64/lib/ -lgeos_c -lgdal_i
+INCLUDEPATH += $$PWD/../../OSGeo4W64/include
+INCLUDEPATH += $$PWD/../../OSGeo4W64/apps/Qt5/include/qtcrypto
+INCLUDEPATH += $$PWD/../../OSGeo4W64/apps/Qt5/include/qt5keychain
+INCLUDEPATH += $$PWD/../../OSGeo4W64/apps/Qt5/include/qwt6
+
 CONFIG(debug, debug|release) {
     LIBS += -L$$PWD/../../x64/debug/ -llicored
     LIBS += -L$$PWD/../../QGIS3.2_x64/debug/lib/ -lqgis_core -lqgis_gui -lqgis_app
@@ -35,23 +41,9 @@ CONFIG(debug, debug|release) {
     LIBS += -L$$PWD/../../x64/release/ -llicore
     LIBS += -L$$PWD/../../QGIS3.2_x64/release/lib/ -lqgis_core -lqgis_gui -lqgis_app
 }
-
-LIBS += -L$$PWD/../../OSGeo4W64-3.2/lib/ -lgeos_c -lgdal_i
-INCLUDEPATH += $$PWD/../../OSGeo4W64-3.2/include
 INCLUDEPATH += $$PWD/../../QGIS3.2_x64/include
-INCLUDEPATH += C:/OSGeo4W64/include
 
 INCLUDEPATH += $$PWD/../include
-INCLUDEPATH += $$PWD/../licore/core
-INCLUDEPATH += $$PWD/../licore/geometry
-INCLUDEPATH += $$PWD/../licore/globe
-INCLUDEPATH += $$PWD/../licore/math
-INCLUDEPATH += $$PWD/../licore/render
-INCLUDEPATH += $$PWD/../licore/render/renderstates
-INCLUDEPATH += $$PWD/../licore/scene
-INCLUDEPATH += $$PWD/../licore/sceneloader
-INCLUDEPATH += $$PWD/../licore/tileset
-INCLUDEPATH += $$PWD/../licore/tree
 
 HEADERS += \
     liextrasglobal.h \
