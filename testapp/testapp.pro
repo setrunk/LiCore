@@ -24,7 +24,7 @@ CONFIG(debug, debug|release) {
 
 INCLUDEPATH += $$PWD/../../QGIS3.2_x64/include
 
-INCLUDEPATH += $$PWD/../licore/include
+INCLUDEPATH += $$PWD/../include
 INCLUDEPATH += $$PWD/../liextras
 
 SOURCES += \

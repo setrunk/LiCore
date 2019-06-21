@@ -62,6 +62,9 @@ inline QUrl resolvedUrl(const QString &path, const QUrl &baseUrl = QUrl())
     if (path.startsWith(QLatin1String("http"), Qt::CaseInsensitive))
         return QUrl(path);
 
+    if (path.startsWith(QLatin1String("file:///"), Qt::CaseInsensitive))
+        return QUrl(path);
+
     if (!baseUrl.isValid() || baseUrl.isLocalFile())
     {
         QFileInfo fi(path);

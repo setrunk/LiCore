@@ -30,7 +30,7 @@ private:
 
     bool mInitialized;
     bool m_printMessage;
-    quint64 m_cacheSizeOfBytes;
+    qint64 m_cacheSizeOfBytes;
     static LiNetworkAccessManager *smMainNAM;
 };
 

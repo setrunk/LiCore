@@ -140,6 +140,8 @@ public:
      */
     Q_INVOKABLE LiGeometryAttribute *attribute(const QString &name) const;
 
+    bool calculateTangents();
+
     /**
      * @brief
      * 返回用于全屏视口渲染的几何体对象

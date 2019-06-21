@@ -61,11 +61,34 @@ void loadDOM(LiScene *scene)
 {
     // shenzhen DOM
     if (1)
-    {
-//        ImageryProvider *imageryProvider = new WmsImageryProvider("http://61.144.226.45:8085/arcgis/rest/services/sz2016/MapServer");
-        ImageryProvider *imageryProvider = new WmsImageryProvider("http://ag.szgeoinfo.com/arcgis/rest/services/szimage/MapServer");
-        ImageryLayer *imageryLayer = new ImageryLayer(imageryProvider);
+    {        
+        LiRectangle rectangle = LiRectangle::MAX_VALUE;
+        QString url = "http://ag.szgeoinfo.com/arcgis/rest/services/szimage/MapServer?bbox=113.71108478300005,22.43722115999999,114.64990900400005,22.872570290999988";
+//        QString url = "http://suplicmap.pnr.sz/tilemap_1/rest/services/SZIMAGE/SZAVI2004_60ZW2K/ImageServer/exportImage?bbox=113.71108478300005,22.43722115999999,114.64990900400005,22.872570290999988";
+
+        QUrlQuery query(url);
+        QString value = query.queryItemValue("bbox");
+        if (value.size())
+        {
+            QStringList l = value.split(QChar(','), QString::SkipEmptyParts);
+            if (l.size() == 4)
+            {
+                double vals[4];
+                for (int i = 0; i < 4; ++i)
+                {
+                    const QString &s = l.at(i);
+                    vals[i] = s.toDouble();
+                }
+
+                rectangle = LiRectangle(vals[0], vals[1], vals[2], vals[3]).toRadians();
+            }
+        }
+
+        ImageryProvider *imageryProvider = new WmsImageryProvider(url);
+        ImageryLayer *imageryLayer = new ImageryLayer(imageryProvider, 0, 100, rectangle);
         scene->globe()->addImageryLayer(imageryLayer);
+
+
 
 //        LiInputSystem *input = GlobalViewer()->engine()->inputSystem();
 //        QObject::connect(input, &LiInputSystem::keyDown, [=](int key) {
@@ -109,25 +132,26 @@ void loadDOM(LiScene *scene)
     }
 }
 
-void loadModel(LiScene *scene, const QString &path)
+void loadModel(LiScene *scene, const QString &path, const Cartographic &lonlat)
 {
     QUrl url = resolvedUrl(path);
     LiSceneLoader *loader = LiSceneIOFactory::createSceneLoader(QUrl(url.path()));
     if (loader)
     {
-        auto promise = loader->load(url);
+        QVariantMap options;
+        auto promise = loader->load(url, options);
         observe(promise).subscribe([=]() {
             loader->deleteLater();
             LiEntity *entity = loader->scene();
             if (entity) {
                 LiEntity *parentEntity = new LiEntity();
-                parentEntity->transform()->setCartographic(Cartographic::fromDegrees(114.054494, 22.540745, 0));
+                parentEntity->transform()->setCartographic(lonlat/*Cartographic::fromDegrees(114.054494, 22.540745, 0)*/);
                 scene->addEntity(parentEntity);
-                entity->transform()->setPosition(Vector3(0, 0, 100));
+//                entity->transform()->setPosition(Vector3(0, 0, 100));
 //                entity->transform()->setScale(10);
-//                entity->transform()->setRotation(Quaternion::fromAxisAndAngle(1,0,0,-90));
+                entity->transform()->setRotation(Quaternion::fromAxisAndAngle(1,0,0,90));
                 entity->setParent(parentEntity);
-//                scene->mainCamera()->flyTo(Cartesian3::fromDegrees(114.054494, 22.540745, 100));
+//                scene->mainCamera()->flyTo(lonlat);
             }
         });
     }
@@ -170,10 +194,12 @@ void loadTrees(LiScene *scene)
             static bool loaded = false;
             if (loaded)
                 return;
-            loaded = true;
 
             if (key == Qt::Key_L) {
-                QgsVectorLayer *vectorLayer = new QgsVectorLayer("D:/work/LiEngine/others/trees/tree.shp", "tree");
+                loaded = true;
+
+//                QgsVectorLayer *vectorLayer = new QgsVectorLayer("D:/work/LiEngine/others/trees/tree.shp", "tree");
+                QgsVectorLayer *vectorLayer = new QgsVectorLayer(QString::fromLocal8Bit("D:/work/LiEngine/others/treeFT/市民中心北广场.shp"), "tree");
 
                 // create tree layer
                 LiTreeLayer *treeLayer = new LiTreeLayer();
@@ -343,8 +369,6 @@ void load3DTileset(LiScene *scene)
     {
         QStringList list;
         list << "http://61.144.226.45:8088/buildings/futian.39733/tileset.json"
-             << "F:/baoan.397334/tileset.json"
-             << "F:/ghds/tileset.json"
              << "http://61.144.226.45:8088/buildings/futianbaimo/tileset.json"
              << "http://61.144.226.45:8088/buildings/xqcs/3dmax/ft-max-3dtiles/2012ftgxmx-2000-PY/tileset.json"
              << "http://61.144.226.45:8088/buildings/xqcs/BIM/bdxsjql2019-4-16/CZ_PD_D-1_GJZ_STR/tileset.json"
@@ -363,7 +387,7 @@ void load3DTileset(LiScene *scene)
     }
 
     // futian
-    if (1)
+    if (0)
     {
 //        tileset = new Li3DTileset("http://61.144.226.45:8088/buildings/futian.39733/tileset.json");
 //        tileset = new Li3DTileset("http://61.144.226.45:8088/buildings/futianbaimo/tileset.json");
@@ -373,7 +397,6 @@ void load3DTileset(LiScene *scene)
 //        tileset = new Li3DTileset("http://61.144.226.45:8088/buildings/feiducaozong/tileset.json");
 //        tileset = new Li3DTileset("http://61.144.226.45:8088/buildings/CZNS_zch/tileset.json");
         tileset = new Li3DTileset("http://68.68.12.43:8088/buildings/szbzqx/tileset.json");
-//        tileset = new Li3DTileset("http://134.175.73.118:8080/ghds/tileset.json");
         tileset->setClampedTerrain(false); // 贴地模式 (默认为true)
 //        tileset->setAltitude(50.0); // 离地高度，该参数可以有用户界面实时调节 (默认为0)
 //        tileset->setGenMeshNormals(true);
@@ -432,7 +455,7 @@ void load3DTileset(LiScene *scene)
     // ghdx
     if (0)
     {
-        tileset = new Li3DTileset("http://61.144.226.45:8084/Tile3D/B3DM/buildings/futian/ghds/tileset.json");
+        tileset = new Li3DTileset("http://68.68.12.43:8088/buildings/futian/ghds/tileset.json");
         tileset->setClampedTerrain(false); // 贴地模式 (默认为true)
         tileset->setAltitude(25.0); // 离地高度，该参数可以有用户界面实时调节 (默认为0)
 //        tileset->setDebugBoundingVolume(true);
@@ -1076,10 +1099,10 @@ void createClipVolume(LiScene *scene)
 
 void createWaterMaterial(LiScene *scene)
 {
-//    LiMaterial *mat = LiMaterial::fromType(LiMaterial::Water);
-    LiMaterial *mat = new LiMaterial();
-    mat->setColor(Qt::cyan);
-    mat->setOpacity(0.5f);
+    LiMaterial *mat = LiMaterial::fromType(LiMaterial::Water);
+//    LiMaterial *mat = new LiMaterial();
+//    mat->setColor(Qt::cyan);
+//    mat->setOpacity(0.5f);
 
     LiPlaneGeometry *geometry = new LiPlaneGeometry();
     geometry->setWidth(1000);
@@ -1094,7 +1117,7 @@ void createWaterMaterial(LiScene *scene)
 
     LiEntity *entity = new LiEntity();
     entity->addComponent(renderer);
-    entity->transform()->setCartographic(Cartographic::fromDegrees(114.054494, 22.540745, 50));
+    entity->transform()->setCartographic(Cartographic::fromDegrees(114.054494, 22.540745, 5));
 
     scene->addEntity(entity);
 }
@@ -1165,8 +1188,10 @@ void loadWMS()
     // arcgis server
     if (1)
     {
-        auto provider = new LiPluginImageryProvider("arcgismapserver", "crs='EPSG:3857' format='JPG' layer='0' url='http://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer'");
+//        auto provider = new LiPluginImageryProvider("arcgismapserver", "crs='EPSG:3857' format='JPG' layer='0' url='http://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer'");
+        auto provider = new LiPluginImageryProvider("arcgismapserver", "crs='EPSG:3857' format='JPG' layer='0' url='https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'");
         auto imageryLayer = new ImageryLayer(provider);
+//        imageryLayer->setAlpha(0.5f);
         GlobalViewer()->scene()->globe()->addImageryLayer(imageryLayer);
     }
 
@@ -1179,9 +1204,25 @@ void loadWMS()
     }
 
     // wms server
-    if (0)
+    if (1)
     {
         auto provider = new LiPluginImageryProvider("wms", "crs=EPSG:4326&dpiMode=all&format=image/png&layers=topp:states&styles=&url=https://demo.geo-solutions.it/geoserver/wms/");
+        auto imageryLayer = new ImageryLayer(provider);
+        GlobalViewer()->scene()->globe()->addImageryLayer(imageryLayer);
+    }
+
+    // wmts server
+    if (0)
+    {
+        auto provider = new LiPluginImageryProvider("wms", "contextualWMSLegend=0&crs=EPSG:3857&dpiMode=7&featureCount=10&format=image/png&layers=geolandbasemap&styles=normal&tileMatrixSet=google3857&url=https://maps.wien.gv.at/basemap/1.0.0/WMTSCapabilities.xml");
+        provider->setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36");
+        auto imageryLayer = new ImageryLayer(provider);
+        GlobalViewer()->scene()->globe()->addImageryLayer(imageryLayer);
+    }
+    if (0)
+    {
+        auto provider = new LiPluginImageryProvider("wms", "contextualWMSLegend=0&crs=EPSG:4490&dpiMode=7&featureCount=10&format=image/jpgpng&layers=SZIMAGE_SZAVI201111_50ZW2K&styles=default&tileMatrixSet=default&url=http://10.1.3.131:6080/arcgis/rest/services/SZIMAGE/SZAVI201111_50ZW2K/ImageServer/WMTS/1.0.0/WMTSCapabilities.xml");
+//        provider->setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36");
         auto imageryLayer = new ImageryLayer(provider);
         GlobalViewer()->scene()->globe()->addImageryLayer(imageryLayer);
     }
@@ -1191,7 +1232,25 @@ void loadWMS()
     {
         auto provider = new LiPluginImageryProvider("arcgismapserver", "crs='EPSG:4490' format='JPG' layer='0' url='http://ag.szgeoinfo.com/arcgis/rest/services/szimage/MapServer'");
         auto imageryLayer = new ImageryLayer(provider);
+//        imageryLayer->setAlpha(0.5f);
+//        imageryLayer->setBrightness(0.5f);
+//        imageryLayer->setContrast(0.8f);
+//        imageryLayer->setHue(0.8);
+//        imageryLayer->setSaturation(0.7f);
+//        imageryLayer->setGamma(1.5f);
         GlobalViewer()->scene()->globe()->addImageryLayer(imageryLayer);
+
+        LiInputSystem *input = GlobalViewer()->engine()->inputSystem();
+        QObject::connect(input, &LiInputSystem::keyDown, [=](int key) {
+            if (key == Qt::Key_F1) {
+                float alpha = std::max(0.f, imageryLayer->alpha()-0.1f);
+                imageryLayer->setAlpha(alpha);
+            }
+            if (key == Qt::Key_F2) {
+                float alpha = std::min(1.f, imageryLayer->alpha()+0.1f);
+                imageryLayer->setAlpha(alpha);
+            }
+        });
     }
 }
 
@@ -1242,7 +1301,7 @@ void flattenTerrain()
 
     auto mask2 = new LiFlattenMask;
     mask2->setPoints(points2);
-    mask2->setMaskHeight(-50);
+    mask2->setMaskHeight(-78);
     mask2->setShowDebugOutline(true);
 
     LiInputSystem *input = GlobalViewer()->engine()->inputSystem();

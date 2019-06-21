@@ -17,7 +17,7 @@ void moveTilesetByMouse(Li3DTileset *tileset); // 设置3DTiles的位置
 
 void loadDEM(LiScene *scene);
 void loadDOM(LiScene *scene);
-void loadModel(LiScene *scene, const QString &path);
+void loadModel(LiScene *scene, const QString &path, const Cartographic &lonlat);
 void loadTrees(LiScene *scene);
 void loadCarAnimation(LiScene *scene);
 void loadQuadtreeTileset();

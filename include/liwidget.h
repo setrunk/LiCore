@@ -61,6 +61,7 @@ signals:
     void mouseWheel(QWheelEvent *);
     void keyPress(QKeyEvent *event);
     void keyRelease(QKeyEvent *event);
+    void dropEvent(QDropEvent *event);
 
 private:
     Q_DECLARE_PRIVATE(LiWidget)
