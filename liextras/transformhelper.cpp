@@ -43,7 +43,7 @@ QgsCoordinateTransform *TransformHelper::crsTransfrom(const QgsCoordinateReferen
     QgsCoordinateTransform *transform = _crsTransforms.value(crs->authid(), 0);
     if (!transform)
     {
-        transform = new QgsCoordinateTransform(*crs, _wgs84);
+        transform = new QgsCoordinateTransform(*crs, _wgs84, QgsCoordinateTransformContext());
         _crsTransforms[crs->authid()] = transform;
     }
     return transform;

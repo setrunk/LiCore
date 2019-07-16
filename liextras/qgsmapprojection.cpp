@@ -6,7 +6,7 @@ QgsMapProjection::QgsMapProjection(const QgsCoordinateReferenceSystem &crs)
     : m_useWebMercator(crs.authid() == QLatin1String("EPSG:3857"))
 {
     static QgsCoordinateReferenceSystem wgs84 = QgsCoordinateReferenceSystem::fromOgcWmsCrs("EPSG:4326");
-    m_transform = QgsCoordinateTransform(crs, wgs84);
+    m_transform = QgsCoordinateTransform(crs, wgs84, QgsCoordinateTransformContext());
 }
 
 Cartesian3 QgsMapProjection::project(const Cartographic &cartographic) const

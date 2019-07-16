@@ -210,6 +210,16 @@ inline double getFloat64(const QByteArray &buffer, int pos)
     return *(double*)(buffer.data() + pos);
 }
 
+inline int floatToByte(float f)
+{
+    return f == 1.0f ? 255 : f * 256;
+}
+
+inline float byteToFloat(int n)
+{
+    return n / 255.0f;
+}
+
 inline Vector2 jsonArrToVec2(const QJsonArray &array)
 {
     return Vector2(array[0].toDouble(), array[1].toDouble());
@@ -225,6 +235,15 @@ inline Vector4 jsonArrToVec4(const QJsonArray &array)
     return Vector4(array[0].toDouble(), array[1].toDouble(), array[2].toDouble(), array[3].toDouble());
 }
 
+inline QColor jsonArrToColor(const QJsonArray &array)
+{
+    return QColor(floatToByte(Math::clamp(array[0].toDouble(), 0, 1)),
+                  floatToByte(Math::clamp(array[1].toDouble(), 0, 1)),
+                  floatToByte(Math::clamp(array[2].toDouble(), 0, 1)),
+                  array.size() > 3 ?
+                  floatToByte(Math::clamp(array[3].toDouble(), 0, 1)) : 255);
+}
+
 inline Matrix4 jsonArrToMatrix4(const QJsonArray &array)
 {
     Matrix4 m;
@@ -235,16 +254,6 @@ inline Matrix4 jsonArrToMatrix4(const QJsonArray &array)
             p[i] = array[i].toDouble();
     }
     return m;
-}
-
-inline int floatToByte(float f)
-{
-    return f == 1.0f ? 255 : f * 256;
-}
-
-inline float byteToFloat(int n)
-{
-    return n / 255.0f;
 }
 
 inline QColor vec4ToColor(const Vector4 &v)

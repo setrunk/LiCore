@@ -492,19 +492,19 @@ QgsRasterIdentifyResult QgsAmsProvider::identify( const QgsPointXY &point, QgsRa
     return QgsRasterIdentifyResult( format, entries );
 }
 
-void QgsAmsProvider::readBlock( int /*bandNo*/, const QgsRectangle &viewExtent, int width, int height, void *data, QgsRasterBlockFeedback *feedback )
-{
-    Q_UNUSED( feedback );  // TODO: make use of the feedback object
+//void QgsAmsProvider::readBlock( int /*bandNo*/, const QgsRectangle &viewExtent, int width, int height, void *data, QgsRasterBlockFeedback *feedback )
+//{
+//    Q_UNUSED( feedback );  // TODO: make use of the feedback object
 
-    // TODO: optimize to avoid writing to QImage
-    draw( viewExtent, width, height );
-    if ( mCachedImage.width() != width || mCachedImage.height() != height )
-    {
-        QgsDebugMsg( "Unexpected image size for block" );
-        return;
-    }
-    std::memcpy( data, mCachedImage.constBits(), mCachedImage.bytesPerLine() * mCachedImage.height() );
-}
+//    // TODO: optimize to avoid writing to QImage
+//    draw( viewExtent, width, height );
+//    if ( mCachedImage.width() != width || mCachedImage.height() != height )
+//    {
+//        QgsDebugMsg( "Unexpected image size for block" );
+//        return;
+//    }
+//    std::memcpy( data, mCachedImage.constBits(), mCachedImage.bytesPerLine() * mCachedImage.height() );
+//}
 
 bool QgsAmsProvider::isTiled() const
 {

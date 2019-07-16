@@ -114,7 +114,7 @@ public:
     QUrl getTileUrl(int x, int y, int level);
 
 protected:
-    void readBlock( int bandNo, const QgsRectangle &viewExtent, int width, int height, void *data, QgsRasterBlockFeedback *feedback = nullptr ) override;
+//    void readBlock( int bandNo, const QgsRectangle &viewExtent, int width, int height, void *data, QgsRasterBlockFeedback *feedback = nullptr ) override;
 
     void draw( const QgsRectangle &viewExtent, int pixelWidth, int pixelHeight );
 
