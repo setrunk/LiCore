@@ -21,12 +21,9 @@ class LICORE_EXPORT LiParticleEmitter : public LiParticleBase
     Q_PROPERTY(int lifeSpan READ particleDuration WRITE setParticleDuration NOTIFY particleDurationChanged)
     Q_PROPERTY(int lifeSpanVariation READ particleDurationVariation WRITE setParticleDurationVariation NOTIFY particleDurationVariationChanged)
     Q_PROPERTY(int maximumEmitted READ maxParticleCount WRITE setMaxParticleCount NOTIFY maximumEmittedChanged)
-    Q_PROPERTY(qreal sizeX READ particleSizeX WRITE setParticleSizeX NOTIFY particleSizeXChanged)
-    Q_PROPERTY(qreal endSizeX READ particleEndSizeX WRITE setParticleEndSizeX NOTIFY particleEndSizeXChanged)
-    Q_PROPERTY(qreal sizeXVariation READ particleSizeXVariation WRITE setParticleSizeXVariation NOTIFY particleSizeXVariationChanged)
-    Q_PROPERTY(qreal sizeY READ particleSizeY WRITE setParticleSizeY NOTIFY particleSizeYChanged)
-    Q_PROPERTY(qreal endSizeY READ particleEndSizeY WRITE setParticleEndSizeY NOTIFY particleEndSizeYChanged)
-    Q_PROPERTY(qreal sizeYVariation READ particleSizeYVariation WRITE setParticleSizeYVariation NOTIFY particleSizeYVariationChanged)
+    Q_PROPERTY(Vector2 size READ particleSize WRITE setParticleSize NOTIFY particleSizeChanged)
+    Q_PROPERTY(Vector2 endSize READ particleEndSize WRITE setParticleEndSize NOTIFY particleEndSizeChanged)
+    Q_PROPERTY(Vector2 sizeVariation READ particleSizeVariation WRITE setParticleSizeVariation NOTIFY particleSizeVariationChanged)
     Q_PROPERTY(LiParticleDirection* velocity READ velocity WRITE setVelocity NOTIFY velocityChanged)
     Q_PROPERTY(LiParticleDirection* acceleration READ acceleration WRITE setAcceleration NOTIFY accelerationChanged)
     Q_PROPERTY(qreal velocityFromMovement READ velocityFromMovement WRITE setVelocityFromMovement NOTIFY velocityFromMovementChanged)
@@ -78,12 +75,9 @@ public:
     int particleDurationVariation() const;
     int particlesPerSecond() const;
 
-    qreal particleSizeX() const;
-    qreal particleEndSizeX() const;
-    qreal particleSizeXVariation() const;
-    qreal particleSizeY() const;
-    qreal particleEndSizeY() const;
-    qreal particleSizeYVariation() const;
+    Vector2 particleSize() const;
+    Vector2 particleEndSize() const;
+    Vector2 particleSizeVariation() const;
 
     qreal velocityFromMovement() const;
     void setVelocityFromMovement(qreal s);
@@ -101,12 +95,9 @@ Q_SIGNALS:
     void groupNameChanged(const QString &arg);
     void particleDurationVariationChanged(int arg);
     void extruderChanged(LiParticleExtruder* arg);
-    void particleSizeXChanged(qreal arg);
-    void particleEndSizeXChanged(qreal arg);
-    void particleSizeXVariationChanged(qreal arg);
-    void particleSizeYChanged(qreal arg);
-    void particleEndSizeYChanged(qreal arg);
-    void particleSizeYVariationChanged(qreal arg);
+    void particleSizeChanged(const Vector2 &);
+    void particleEndSizeChanged(const Vector2 &);
+    void particleSizeVariationChanged(const Vector2 &);
     void velocityChanged(LiParticleDirection * arg);
     void accelerationChanged(LiParticleDirection * arg);
     void maximumEmittedChanged(int arg);
@@ -124,12 +115,9 @@ public Q_SLOTS:
     void setGroupName(const QString &arg);
     void setParticleDurationVariation(int arg);
     void setExtruder(LiParticleExtruder* arg);
-    void setParticleSizeX(qreal arg);
-    void setParticleEndSizeX(qreal arg);
-    void setParticleSizeXVariation(qreal arg);
-    void setParticleSizeY(qreal arg);
-    void setParticleEndSizeY(qreal arg);
-    void setParticleSizeYVariation(qreal arg);
+    void setParticleSize(const Vector2 &size);
+    void setParticleEndSize(const Vector2 &endSize);
+    void setParticleSizeVariation(const Vector2 &sizeVariation);
     void setVelocity(LiParticleDirection * arg);
     void setAcceleration(LiParticleDirection * arg);
     void setMaxParticleCount(int arg);
