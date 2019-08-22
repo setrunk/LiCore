@@ -19,7 +19,7 @@ ArcgisTilingScheme::ArcgisTilingScheme(const QVariantMap &serviceInfo)
         return;
     }
 
-    _rectangle = TransformHelper::instance()->toWgs84(_fullExtent, &mCrs);
+    _rectangle = TransformHelper::instance()->toWgs84(_fullExtent, mCrs);
 
     QVariantMap tileInfo = serviceInfo["tileInfo"].toMap();
     _tileWidth = tileInfo["cols"].toInt();
@@ -56,7 +56,7 @@ ArcgisTilingScheme::ArcgisTilingScheme(const QVariantMap &serviceInfo)
         double xmax = ox + tileWidth * entry.tileEndX;
         double ymin = oy - tileHeight * entry.tileStartY;
         double ymax = oy - tileHeight * entry.tileEndY;
-        LiRectangle rect = TransformHelper::instance()->toWgs84(QgsRectangle(xmin, ymin, xmax, ymax), &mCrs);
+        LiRectangle rect = TransformHelper::instance()->toWgs84(QgsRectangle(xmin, ymin, xmax, ymax), mCrs);
 
         entry.tileWidth = rect.width() / tilesX;
         entry.tileHeight = rect.height() / tilesY;

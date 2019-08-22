@@ -74,7 +74,7 @@ Future LiQuadtreeTileset::load(const QUrl &url)
                         double x = e.attribute("x").toDouble();
                         double y = e.attribute("y").toDouble();
                         double z = e.attribute("z").toDouble();
-                        Cartographic cartographic = TransformHelper::instance()->toWgs84(x, y, &crs);
+                        Cartographic cartographic = TransformHelper::instance()->toWgs84(x, y, crs);
                         cartographic.height = z;
 
                         Cartesian3 point = Ellipsoid::WGS84()->cartographicToCartesian(cartographic);

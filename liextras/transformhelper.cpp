@@ -32,24 +32,24 @@ QgsCoordinateReferenceSystem *TransformHelper::CGCS2000()
 
 QgsCoordinateTransform *TransformHelper::CGCS2000Transform()
 {
-    return crsTransfrom(&_cgcs2000);
+    return crsTransfrom(_cgcs2000);
 }
 
-QgsCoordinateTransform *TransformHelper::crsTransfrom(const QgsCoordinateReferenceSystem * crs)
+QgsCoordinateTransform *TransformHelper::crsTransfrom(const QgsCoordinateReferenceSystem &crs)
 {
-    if (!crs)
+    if (!crs.isValid())
         return nullptr;
 
-    QgsCoordinateTransform *transform = _crsTransforms.value(crs->authid(), 0);
+    QgsCoordinateTransform *transform = _crsTransforms.value(crs.authid(), 0);
     if (!transform)
     {
-        transform = new QgsCoordinateTransform(*crs, _wgs84, QgsCoordinateTransformContext());
-        _crsTransforms[crs->authid()] = transform;
+        transform = new QgsCoordinateTransform(crs, _wgs84, QgsCoordinateTransformContext());
+        _crsTransforms[crs.authid()] = transform;
     }
     return transform;
 }
 
-Cartographic TransformHelper::toWgs84(double x, double y, const QgsCoordinateReferenceSystem *crs)
+Cartographic TransformHelper::toWgs84(double x, double y, const QgsCoordinateReferenceSystem &crs)
 {
     Cartographic result;
 
@@ -64,7 +64,7 @@ Cartographic TransformHelper::toWgs84(double x, double y, const QgsCoordinateRef
     return result;
 }
 
-QgsPointXY TransformHelper::toNative(const Cartographic &p, const QgsCoordinateReferenceSystem *crs)
+QgsPointXY TransformHelper::toNative(const Cartographic &p, const QgsCoordinateReferenceSystem &crs)
 {
     QgsPointXY result;
 
@@ -77,14 +77,14 @@ QgsPointXY TransformHelper::toNative(const Cartographic &p, const QgsCoordinateR
     return result;
 }
 
-LiRectangle TransformHelper::toWgs84(const QgsRectangle &extent, const QgsCoordinateReferenceSystem *crs)
+LiRectangle TransformHelper::toWgs84(const QgsRectangle &extent, const QgsCoordinateReferenceSystem &crs)
 {
     auto pMin = toWgs84(extent.xMinimum(), extent.yMinimum(), crs);
     auto pMax = toWgs84(extent.xMaximum(), extent.yMaximum(), crs);
     return LiRectangle(pMin.longitude, pMin.latitude, pMax.longitude, pMax.latitude);
 }
 
-QgsRectangle TransformHelper::toNative(const LiRectangle &extent, const QgsCoordinateReferenceSystem *crs)
+QgsRectangle TransformHelper::toNative(const LiRectangle &extent, const QgsCoordinateReferenceSystem &crs)
 {
     auto pMin = toNative(extent.southwest(), crs);
     auto pMax = toNative(extent.northeast(), crs);

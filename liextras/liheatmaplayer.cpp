@@ -34,7 +34,7 @@ void LiHeatmapLayer::processFeature(const QgsFeature &feature)
     QgsPointXY *point = (QgsPointXY*)feature.geometry().get();
     double x = point->x();
     double y = point->y();
-    Cartographic cart = TransformHelper::instance()->toWgs84(x, y, &m_vectorLayer->crs());
+    Cartographic cart = TransformHelper::instance()->toWgs84(x, y, m_vectorLayer->crs());
 
     const auto attrs = feature.attributes();
     double value = attrs[m_valueAttrIndex].toDouble();

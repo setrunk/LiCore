@@ -11,11 +11,11 @@ class LIEXTRAS_EXPORT TransformHelper
 public:
     ~TransformHelper();
 
-    Cartographic toWgs84(double x, double y, const QgsCoordinateReferenceSystem * crs);
-    QgsPointXY toNative(const Cartographic &p, const QgsCoordinateReferenceSystem * crs);
+    Cartographic toWgs84(double x, double y, const QgsCoordinateReferenceSystem &crs);
+    QgsPointXY toNative(const Cartographic &p, const QgsCoordinateReferenceSystem &crs);
 
-    LiRectangle toWgs84(const QgsRectangle &extent, const QgsCoordinateReferenceSystem * crs);
-    QgsRectangle toNative(const LiRectangle &extent, const QgsCoordinateReferenceSystem * crs);
+    LiRectangle toWgs84(const QgsRectangle &extent, const QgsCoordinateReferenceSystem &crs);
+    QgsRectangle toNative(const LiRectangle &extent, const QgsCoordinateReferenceSystem &crs);
 
     static TransformHelper *instance();
 
@@ -23,7 +23,7 @@ public:
     QgsCoordinateReferenceSystem *CGCS2000();
 
     QgsCoordinateTransform *CGCS2000Transform();
-    QgsCoordinateTransform *crsTransfrom(const QgsCoordinateReferenceSystem * crs);
+    QgsCoordinateTransform *crsTransfrom(const QgsCoordinateReferenceSystem &crs);
 
 private:
     TransformHelper();

@@ -16,7 +16,7 @@ void LiTreeLayer::load(QgsVectorLayer *vectorLayer)
     if (vectorLayer)
     {
         m_vectorLayer = new LiVectorLayer(vectorLayer, this);
-        m_rectangle = TransformHelper::instance()->toWgs84(vectorLayer->extent(), &vectorLayer->crs());
+        m_rectangle = TransformHelper::instance()->toWgs84(vectorLayer->extent(), vectorLayer->crs());
         m_center = m_rectangle.center();
 
         QgsFields fields = vectorLayer->fields();
@@ -69,7 +69,7 @@ void LiTreeLayer::processFeature(const QgsFeature &feature)
             scale = attrs[m_scaleIndex].toDouble();
         }
 
-        Cartographic cart = TransformHelper::instance()->toWgs84(x, y, &m_vectorLayer->crs());
+        Cartographic cart = TransformHelper::instance()->toWgs84(x, y, m_vectorLayer->crs());
         cart.setHeight(z);
 
         if (m_instances.contains(name))
