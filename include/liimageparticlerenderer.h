@@ -2,7 +2,9 @@
 #define LIIMAGERAPARTICLERENDERER_H
 
 #include "liparticlerenderer.h"
+#include "vector4.h"
 
+class LiTexture;
 class LiParticleDirection;
 class LiImageParticleRendererPrivate;
 
@@ -23,6 +25,7 @@ class LICORE_EXPORT LiImageParticleRenderer : public LiParticleRenderer
     Q_PROPERTY(bool autoRotation READ autoRotation WRITE setAutoRotation NOTIFY autoRotationChanged RESET resetRotation)
     Q_PROPERTY(LiParticleDirection* xVector READ xVector WRITE setXVector NOTIFY xVectorChanged RESET resetDeformation)
     Q_PROPERTY(LiParticleDirection* yVector READ yVector WRITE setYVector NOTIFY yVectorChanged RESET resetDeformation)
+    Q_PROPERTY(Vector4 imageScaleAndTranslation READ imageScaleAndTranslation WRITE setImageScaleAndTranslation NOTIFY imageScaleAndTranslationChanged)
 
 public:
     explicit LiImageParticleRenderer(LiNode *parent = 0);
@@ -71,6 +74,8 @@ public:
     LiParticleDirection *xVector() const;
     LiParticleDirection *yVector() const;
 
+    Vector4 imageScaleAndTranslation() const; // xy = translation, zw = scale
+
     void resetColor();
     void resetRotation();
     void resetDeformation();
@@ -90,6 +95,7 @@ Q_SIGNALS:
     void autoRotationChanged(bool arg);
     void xVectorChanged(LiParticleDirection* arg);
     void yVectorChanged(LiParticleDirection* arg);
+    void imageScaleAndTranslationChanged(const Vector4 &);
 
 public Q_SLOTS:
     void setEntryEffect(EntryEffect arg);
@@ -106,6 +112,7 @@ public Q_SLOTS:
     void setAutoRotation(bool arg);
     void setXVector(LiParticleDirection* arg);
     void setYVector(LiParticleDirection* arg);
+    void setImageScaleAndTranslation(const Vector4 &v);
 
 private:
     friend class LiParticleSystem;
