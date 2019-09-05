@@ -26,6 +26,7 @@ class LICORE_EXPORT LiImageParticleRenderer : public LiParticleRenderer
     Q_PROPERTY(LiParticleDirection* xVector READ xVector WRITE setXVector NOTIFY xVectorChanged RESET resetDeformation)
     Q_PROPERTY(LiParticleDirection* yVector READ yVector WRITE setYVector NOTIFY yVectorChanged RESET resetDeformation)
     Q_PROPERTY(Vector4 imageScaleAndTranslation READ imageScaleAndTranslation WRITE setImageScaleAndTranslation NOTIFY imageScaleAndTranslationChanged)
+    Q_PROPERTY(AlignedAxis alignedAxis READ alignedAxis WRITE setAlignedAxis NOTIFY alignedAxisChanged)
 
 public:
     explicit LiImageParticleRenderer(LiNode *parent = 0);
@@ -55,6 +56,15 @@ public:
     };
     Q_ENUM(BlendMode)
 
+    enum AlignedAxis
+    {
+        AlignedScreen, // default
+        AlignedXAxis,
+        AlignedYAxis,
+        AlignedZAxis
+    };
+    Q_ENUM(AlignedAxis)
+
     Status status() const;
     EntryEffect entryEffect() const;
     QUrl image() const;
@@ -62,7 +72,6 @@ public:
     qreal colorVariation() const;
     qreal alpha() const;
     qreal alphaVariation() const;
-
     BlendMode blendMode() const;
 
     qreal rotation() const;
@@ -70,11 +79,11 @@ public:
     qreal rotationVelocity() const;
     qreal rotationVelocityVariation() const;
     bool autoRotation() const;
+    AlignedAxis alignedAxis() const;
+    Vector4 imageScaleAndTranslation() const; // xy = translation, zw = scale
 
     LiParticleDirection *xVector() const;
     LiParticleDirection *yVector() const;
-
-    Vector4 imageScaleAndTranslation() const; // xy = translation, zw = scale
 
     void resetColor();
     void resetRotation();
@@ -96,6 +105,7 @@ Q_SIGNALS:
     void xVectorChanged(LiParticleDirection* arg);
     void yVectorChanged(LiParticleDirection* arg);
     void imageScaleAndTranslationChanged(const Vector4 &);
+    void alignedAxisChanged(AlignedAxis);
 
 public Q_SLOTS:
     void setEntryEffect(EntryEffect arg);
@@ -113,6 +123,7 @@ public Q_SLOTS:
     void setXVector(LiParticleDirection* arg);
     void setYVector(LiParticleDirection* arg);
     void setImageScaleAndTranslation(const Vector4 &v);
+    void setAlignedAxis(AlignedAxis axis);
 
 private:
     friend class LiParticleSystem;

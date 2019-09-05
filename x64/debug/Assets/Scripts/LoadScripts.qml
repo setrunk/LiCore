@@ -5,7 +5,7 @@ QtObject {
 		//GlobalViewer.scene.globe.setTerrainProviderUrl('http://61.144.226.45:8084/Tile3D/B3DM/terrain');
 		//GlobalViewer.scene.globe.setTerrainProviderUrl('http://61.144.226.45:8084/Tile3D/B3DM/terrain/mesh');
 		//GlobalViewer.scene.globe.setTerrainProviderUrl('http://61.144.226.45:8084/Tile3D/B3DM/terra/longhua/terrainmesh');
-		GlobalViewer.scene.globe.setTerrainProviderUrl('http://61.144.226.45:8088/terrain/mesh');
+		//GlobalViewer.scene.globe.setTerrainProviderUrl('http://61.144.226.45:8088/terrain/mesh');
 		
 		if (false) {
 			GlobalViewer.scene.globe.addImageryLayer({
