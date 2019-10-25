@@ -73,6 +73,8 @@ public:
      */
     virtual bool raycast(const Ray &ray, LiRaycastHit *hit) const;
 
+    LiGeometryRenderer *clone() const override;
+
 private:
     Q_DECLARE_PRIVATE(LiMesh)
 };

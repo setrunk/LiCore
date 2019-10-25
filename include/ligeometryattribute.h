@@ -22,6 +22,7 @@ class LICORE_EXPORT LiGeometryAttribute : public LiNode
     Q_PROPERTY(ComponentDataType componentDataType READ componentDataType WRITE setComponentDataType NOTIFY componentDataTypeChanged)
     Q_PROPERTY(int components READ components WRITE setComponents NOTIFY componentsChanged)
     Q_PROPERTY(int instanceDataStep READ instanceDataStep WRITE setInstanceDataStep NOTIFY instanceDataStepChanged)
+    Q_PROPERTY(bool normalized READ normalized WRITE setNormalized NOTIFY normalizedChanged)
 public:
     /**
      * @brief
@@ -39,6 +40,18 @@ public:
         FLOAT64
     };
     Q_ENUM(ComponentDataType)
+
+    enum AttributeType
+    {
+        POSITION,
+        NORMAL,
+        TANGENT,
+        TEXCOORD0,
+        TEXCOORD1,
+        JOINT,
+        WEIGHT,
+        BATCHID
+    };
 
     /**
      * @brief
@@ -114,12 +127,13 @@ public:
      */
     int instanceDataStep() const;
 
-    /**
-     * @brief
-     * 内部函数，外部不要调用
-     * @return LiNodeChangeBasePtr
-     */
-    LiNodeChangeBasePtr createChangePtr() const;
+    bool normalized() const;
+    void setNormalized(bool normalized);
+
+    static LiGeometryAttribute *create(LiBuffer *buffer,
+                                       int offsetBytes,
+                                       int components,
+                                       ComponentDataType componentDataType = FLOAT32);
 
     /**
      * @brief
@@ -149,34 +163,11 @@ public:
     static LiGeometryAttribute *createNormalAttribute(LiBuffer *buffer,
                                                       int offsetBytes,
                                                       int components);
-    /**
-     * @brief
-     * 创建Tangent顶点数据属性
-     * @param buffer
-     * 顶点数据缓存
-     * @param offsetBytes
-     * 在顶点数据缓存中的字节偏移量
-     * @param components
-     * 顶点属性的通道数量
-     * @return LiGeometryAttribute
-     */
+
     static LiGeometryAttribute *createTangentAttribute(LiBuffer *buffer,
                                                        int offsetBytes,
                                                        int components);
-    /**
-     * @brief
-     * 创建Binormal顶点数据属性
-     * @param buffer
-     * 顶点数据缓存
-     * @param offsetBytes
-     * 在顶点数据缓存中的字节偏移量
-     * @param components
-     * 顶点属性的通道数量
-     * @return LiGeometryAttribute
-     */
-    static LiGeometryAttribute *createBinormalAttribute(LiBuffer *buffer,
-                                                        int offsetBytes,
-                                                        int components);
+
     /**
      * @brief
      * 创建TexCoord顶点数据属性
@@ -194,45 +185,15 @@ public:
 
     /**
      * @brief
-     * 返回默认的Position属性的名称
+     * 返回默认的属性名称
      * @return QString
      */
+
+    Q_INVOKABLE static QString defaultAttributeName(AttributeType type);
     Q_INVOKABLE static QString defaultPositionAttributeName();
-
-    /**
-     * @brief
-     * 返回默认的TexCoord属性的名称
-     * @return QString
-     */
-    Q_INVOKABLE static QString defaultTexCoordAttributeName();
-
-    /**
-     * @brief
-     * 返回默认的TextureId属性的名称
-     * @return QString
-     */
-    Q_INVOKABLE static QString defaultTextureIdAttributeName();
-
-    /**
-     * @brief
-     * 返回默认的Normal属性的名称
-     * @return QString
-     */
     Q_INVOKABLE static QString defaultNormalAttributeName();
-
-    /**
-     * @brief
-     * 返回默认的Tangent属性的名称
-     * @return QString
-     */
     Q_INVOKABLE static QString defaultTangentAttributeName();
-
-    /**
-     * @brief
-     * 返回默认的Binormal属性的名称
-     * @return QString
-     */
-    Q_INVOKABLE static QString defaultBinormalAttributeName();
+    Q_INVOKABLE static QString defaultTexCoordAttributeName();
 
 signals:
     void bufferChanged();
@@ -241,6 +202,7 @@ signals:
     void componentDataTypeChanged();
     void componentsChanged();
     void instanceDataStepChanged();
+    void normalizedChanged();
     void attributeChanged();
 
 public slots:

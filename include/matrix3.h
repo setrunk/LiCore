@@ -178,6 +178,7 @@ public:
      * @return Vector3 operator
      */
     friend Vector3 operator*(const Matrix3& matrix, const Vector3& vector);
+    friend Vector2 operator*(const Matrix3& matrix, const Vector2& vector);
     /**
      * @brief
      *
@@ -394,6 +395,18 @@ inline Vector3 operator*(const Matrix3& matrix, const Vector3& vector)
         vector.y() * matrix.m[1][2] +
         vector.z() * matrix.m[2][2];
     return Vector3(x, y, z);
+}
+
+inline Vector2 operator*(const Matrix3& matrix, const Vector2& vector)
+{
+    double x, y;
+    x = vector.x() * matrix.m[0][0] +
+        vector.y() * matrix.m[1][0] +
+        matrix.m[2][0];
+    y = vector.x() * matrix.m[0][1] +
+        vector.y() * matrix.m[1][1] +
+        matrix.m[2][1];
+    return Vector2(x, y);
 }
 
 /**

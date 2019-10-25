@@ -244,6 +244,18 @@ inline QColor jsonArrToColor(const QJsonArray &array)
                   floatToByte(Math::clamp(array[3].toDouble(), 0, 1)) : 255);
 }
 
+inline Matrix3 jsonArrToMatrix3(const QJsonArray &array)
+{
+    Matrix3 m;
+    if (array.size() == 9)
+    {
+        double *p = m.data();
+        for (int i = 0; i < 9; ++i)
+            p[i] = array[i].toDouble();
+    }
+    return m;
+}
+
 inline Matrix4 jsonArrToMatrix4(const QJsonArray &array)
 {
     Matrix4 m;
@@ -287,6 +299,28 @@ inline QJsonArray matrix4ToJsonArr(const Matrix4 &m)
 inline int zigZagDecode(int value)
 {
     return (value >> 1) ^ (-(value & 1));
+}
+
+inline uint32_t murmur3(const uint32_t* key, size_t wordCount, uint32_t seed)
+{
+    uint32_t h = seed;
+    size_t i = wordCount;
+    do {
+        uint32_t k = *key++;
+        k *= 0xcc9e2d51;
+        k = (k << 15) | (k >> 17);
+        k *= 0x1b873593;
+        h ^= k;
+        h = (h << 13) | (h >> 19);
+        h = (h * 5) + 0xe6546b64;
+    } while (--i);
+    h ^= wordCount;
+    h ^= h >> 16;
+    h *= 0x85ebca6b;
+    h ^= h >> 13;
+    h *= 0xc2b2ae35;
+    h ^= h >> 16;
+    return h;
 }
 
 LICORE_EXPORT QByteArray createRegularGridIndices(int width, int height);

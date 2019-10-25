@@ -1,11 +1,11 @@
 ﻿#ifndef LITREE_H
 #define LITREE_H
 
-#include "licomponent.h"
+#include "ligeometryrenderer.h"
 
 class LiTreePrivate;
 
-class LICORE_EXPORT LiTree : public LiComponent
+class LICORE_EXPORT LiTree : public LiGeometryRenderer
 {
     Q_OBJECT
 public:

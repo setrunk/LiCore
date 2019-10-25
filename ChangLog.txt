@@ -1,0 +1,40 @@
+Change Log
+==========
+
+- 2019-10-25
+
+- 全新材质系统，支持PBR材质，使用LiMaterial.setShadingModel()函数设置采用何种着色方式，
+    * MetallicRoughness，默认方式，glTF 2.0采用的PBR材质标准，由roughness, metallic, reflectance参数控制；
+    * SpecularGlossiness，glTF 1.0采用的PBR材质标准，由specularColor, glossiness参数控制；
+    * Subsurface，次表面散射材质，用来模拟树叶、皮肤、蜡烛等有半透光的物体，除了roughness, metallic, reflectance参数，还有thickness, subsurfacePower参数控制；
+    * Water，水面材质；
+    * Unlit，自发光材质；
+    另外，材质系统还支持以下贴图：
+    * DiffuseMap，基本纹理贴图；
+    * NormalMap，法线贴图；
+    * OcclusionMap，遮挡贴图；
+    * MetallicRoughnessMap，金属粗糙度贴图；
+    * SpecularGlossinessMap，高光平滑度贴图；
+
+- 太阳光照系统，根据大气模型算法自动计算太阳光的颜色，早晨-白天-黄昏-夜晚，不同时段有不同的太阳颜色；
+
+- IBL光照，基于图像光照系统，由LiScene.indirectLight()函数获取IBL对象，进行参数设置，支持.hdr格式的全景光子图；
+
+- Animator动画模块，模块采用多线程并行计算，可以处理大量的关键帧动画，由以下子模块组成：
+    * LiAnimationClip，动画片段，一个LiAnimator由一个或多个LiAnimationClip组成；
+    * LiAnimationChannel，动画通道，一个通道代表对象的一个属性动画，如Position, Rotation, Scale等，一个LiAnimationClip由一个或多个LiAnimationChannel组成；
+    * LiAnimationSampler， 动画采样器，供LiAnimationChannel采样时使用，由times, values两组数据组成，times代表时间戳，values则是时间戳对应的值；
+    具体规格请参考glTF 2.0动画系统。
+
+- Skin/Skeleton骨骼动画系统，支持关节动画，以及变形(Morph)动画：
+    * LiSkin，皮肤动画；
+    * Morphing，变形动画，通过LiGeometry.setMorphTargets()函数设置物体的变形目标；
+
+- glTF 2.0格式支持，全面支持glTF 2.0的大部分特性：
+    * Draco Compression，基于Google Draco压缩算法的模型
+    * Web3D Quantized，整形编码数据，有效减少数据大小
+    * Sparse Accessor，抽稀访问器，主要用在Morphing变形目标的数据访问
+    * Skins，皮肤动画
+    * Morphing Targets，变形动画
+    * Animations，动画模块
+    

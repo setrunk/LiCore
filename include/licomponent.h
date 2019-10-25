@@ -13,7 +13,9 @@ class LiGeometryRenderer;
 class LiMesh;
 class LiRigidbody;
 class LiTransform;
+class LiSkin;
 class LiComponentPrivate;
+class LiAnimator;
 
 /**
  * @brief
@@ -27,6 +29,7 @@ class LICORE_EXPORT LiComponent : public LiNode
     Q_PROPERTY(LiGeometryRenderer* renderer READ renderer)
     Q_PROPERTY(LiCamera* camera READ camera)
     Q_PROPERTY(LiLight* light READ light)
+    Q_PROPERTY(LiSkin* skin READ skin)
 public:
     /**
      * @brief
@@ -64,6 +67,13 @@ public:
 
     /**
      * @brief
+     * 获取entity中的skin组件，等同于entity()->skin()函数
+     * @return LiSkin
+     */
+    LiSkin *skin() const;
+
+    /**
+     * @brief
      * 获取entity中的camera组件，等同于entity()->camera()函数
      * @return LiCamera
      */
@@ -83,6 +93,8 @@ public:
      * @return LiAnimation
      */
     LiAnimation *animation() const;
+
+    LiAnimator *animator() const;
 
     /**
      * @brief

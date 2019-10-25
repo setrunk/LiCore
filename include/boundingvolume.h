@@ -152,7 +152,7 @@ public:
      *
      * @param o
      */
-    void merge(const BoundingVolume &o);
+    void merge(const BoundingVolume &other);
 
     /**
      * @brief

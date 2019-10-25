@@ -410,6 +410,18 @@ namespace Math
         return t * ::rand();
     }
 
+    template <typename T>
+    T cubicSpline(const T& vert0, const T& tang0, const T& vert1, const T& tang1, float t) {
+        float tt = t * t, ttt = tt * t;
+        float s2 = -2 * ttt + 3 * tt, s3 = ttt - tt;
+        float s0 = 1 - s2, s1 = s3 - tt + t;
+        T p0 = vert0;
+        T m0 = tang0;
+        T p1 = vert1;
+        T m1 = tang1;
+        return s0 * p0 + s1 * m0 * t + s2 * p1 + s3 * m1 * t;
+    }
+
 }
 
 #endif // LIMATH_H

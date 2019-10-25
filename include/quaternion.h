@@ -41,6 +41,9 @@ public:
      * @param vector
      */
     Quaternion(double scalar, const Vector3& vector);
+
+    Quaternion(const QQuaternion &q);
+
     /**
      * @brief
      *
@@ -477,6 +480,8 @@ inline Quaternion::Quaternion() : wp(1.0), xp(0.0), yp(0.0), zp(0.0) {}
  */
 inline Quaternion::Quaternion(double aScalar, double xpos, double ypos, double zpos) : wp(aScalar), xp(xpos), yp(ypos), zp(zpos) {}
 
+inline Quaternion::Quaternion(const QQuaternion &q)
+    : wp(q.scalar()), xp(q.x()), yp(q.y()), zp(q.z()) {}
 /**
  * @brief
  *

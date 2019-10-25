@@ -9,28 +9,38 @@ class LiAtmospherePrivate;
 class LICORE_EXPORT LiAtmosphere : public LiGeometryRenderer
 {
     Q_OBJECT
-    Q_PROPERTY(double hue READ hueShift WRITE setHueShift NOTIFY hueChanged)
-    Q_PROPERTY(double saturation READ saturationShift WRITE setSaturationShift NOTIFY saturationChanged)
-    Q_PROPERTY(double brightness READ brightnessShift WRITE setBrightnessShift NOTIFY brightnessChanged)
+    Q_PROPERTY(float hue READ hueShift WRITE setHueShift NOTIFY hueChanged)
+    Q_PROPERTY(float saturation READ saturationShift WRITE setSaturationShift NOTIFY saturationChanged)
+    Q_PROPERTY(float brightness READ brightnessShift WRITE setBrightnessShift NOTIFY brightnessChanged)
+    Q_PROPERTY(float intensity READ intensity WRITE setIntensity NOTIFY intensityChanged)
+    Q_PROPERTY(float exposure READ exposure WRITE setExposure NOTIFY exposureChanged)
 public:
     explicit LiAtmosphere(LiNode *parent = 0);
 
     bool show() const;
     void setShow(bool show);
 
-    double hueShift() const;
-    void setHueShift(double hueShift);
+    float intensity() const;
+    void setIntensity(float intensity);
 
-    double saturationShift() const;
-    void setSaturationShift(double saturationShift);
+    float exposure() const;
+    void setExposure(float exposure);
 
-    double brightnessShift() const;
-    void setBrightnessShift(double brightnessShift);
+    float hueShift() const;
+    void setHueShift(float hueShift);
+
+    float saturationShift() const;
+    void setSaturationShift(float saturationShift);
+
+    float brightnessShift() const;
+    void setBrightnessShift(float brightnessShift);
 
 signals:
-    void hueChanged(double value);
-    void saturationChanged(double value);
-    void brightnessChanged(double value);
+    void intensityChanged(float value);
+    void exposureChanged(float value);
+    void hueChanged(float value);
+    void saturationChanged(float value);
+    void brightnessChanged(float value);
 
 private:
     Q_DECLARE_PRIVATE(LiAtmosphere)

@@ -92,19 +92,22 @@ public:
      * 设置当前的日期时间，太阳的位置会根据设置的日期时间重新计算
      * @param dateTime 自定义日期时间
      */
-    void setDateTime(const QDateTime &dateTime);
+    Q_INVOKABLE void setDateTime(const QDateTime &dateTime);
+    Q_INVOKABLE void setYear(int year);
+    Q_INVOKABLE void setMonth(int month);
+    Q_INVOKABLE void setDay(int day);
+    Q_INVOKABLE void setHour(int hour);
+    Q_INVOKABLE void setMinute(int minute);
+    Q_INVOKABLE void setSecond(int second);
 
 private:
-    void onEngineStartup();
-
-    /**
-     * @brief
-     * 每帧执行一次
-     */
-    quint64 tick();
+    void onEngineStartup() override;
+    void onEngineShutdown() override;
+    void beginFrame() override;
+    void update() override;
+    void endFrame() override;
 
     Q_DECLARE_PRIVATE(LiTimeSystem)
-
     friend class LiEngine;
 };
 

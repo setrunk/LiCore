@@ -14,6 +14,8 @@ class LiAnimation;
 class LiAudio;
 class LiCollider;
 class LiRigidbody;
+class LiSkin;
+class LiAnimator;
 
 class LiEntity;
 typedef QVector<LiEntity*> LiEntityList;
@@ -112,6 +114,12 @@ public:
      */
     LiLight *light() const;
 
+    /**
+     * @brief
+     * 返回skin组件
+     * @return LiSkin
+     */
+    LiSkin *skin() const;
 
     // TODO ...
     /**
@@ -120,6 +128,8 @@ public:
      * @return LiAnimation
      */
     LiAnimation *animation() const;
+
+    LiAnimator *animator() const;
 
     /**
      * @brief
@@ -227,5 +237,11 @@ LICORE_EXPORT LiGeometryRenderer *LiEntity::component<LiGeometryRenderer>() cons
 
 template<>
 LICORE_EXPORT LiComputeRenderer *LiEntity::component<LiComputeRenderer>() const;
+
+template<>
+LICORE_EXPORT LiSkin *LiEntity::component<LiSkin>() const;
+
+template<>
+LICORE_EXPORT LiAnimator *LiEntity::component<LiAnimator>() const;
 
 #endif // LIENTITY_H

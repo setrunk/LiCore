@@ -23,9 +23,10 @@ class LiBatchTable;
 class LICORE_EXPORT LiGeometryRenderer : public LiComponent
 {
     Q_OBJECT
+    Q_PROPERTY(Type type READ type WRITE setType NOTIFY typeChanged)
+    Q_PROPERTY(PrimitiveType primitiveType READ primitiveType WRITE setPrimitiveType NOTIFY primitiveTypeChanged)
     Q_PROPERTY(LiGeometry * geometry READ geometry WRITE setGeometry NOTIFY geometryChanged)
     Q_PROPERTY(LiMaterial * material READ material WRITE setMaterial NOTIFY materialChanged)
-    Q_PROPERTY(PrimitiveType primitiveType READ primitiveType WRITE setPrimitiveType NOTIFY primitiveTypeChanged)
     Q_PROPERTY(int instanceCount READ instanceCount WRITE setInstanceCount NOTIFY instanceCountChanged)
     Q_PROPERTY(int primitiveCount READ primitiveCount WRITE setPrimitiveCount NOTIFY primitiveCountChanged)
     Q_PROPERTY(int indexOffset READ indexOffset WRITE setIndexOffset NOTIFY indexOffsetChanged)
@@ -211,6 +212,9 @@ public:
      */
     void setReceiveShadow(bool receive);
 
+    QVector<float> morphWeights() const;
+    void setMorphWeights(const QVector<float> &morphWeights);
+
     /**
      * @brief
      * 返回渲染用的Instance属性对象
@@ -238,6 +242,9 @@ public:
      * @param batchTable
      */
     void setBatchTable(LiBatchTable *batchTable);
+
+    QVector<Matrix4> bones() const;
+    void setBones(const QVector<Matrix4> &bones);
 
     /**
      * @brief
@@ -340,14 +347,7 @@ public:
      */
     virtual bool raycast(const Ray &ray, LiRaycastHit *hit) const;
 
-    /**
-     * @brief
-     * 根据类型创建材质，供qml中调用
-     * @param type
-     * 材质类型
-     * @return LiMaterial
-     */
-    Q_INVOKABLE static LiMaterial *materialFromType(int type);
+    virtual LiGeometryRenderer *clone() const;
 
 public slots:
     /**

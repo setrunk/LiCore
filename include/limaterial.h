@@ -22,58 +22,57 @@ class LICORE_EXPORT LiMaterial : public LiNode
     Q_PROPERTY(ShadingModel shadingModel READ shadingModel WRITE setShadingModel NOTIFY shadingModelChanged)
     Q_PROPERTY(AlphaMode alphaMode READ alphaMode WRITE setAlphaMode NOTIFY alphaModeChanged)
     Q_PROPERTY(bool receiveShadow READ receiveShadow WRITE setReceiveShadow NOTIFY receiveShadowChanged)
+    Q_PROPERTY(bool castShadow READ castShadow WRITE setCastShadow NOTIFY castShadowChanged)
     Q_PROPERTY(bool bothSided READ bothSided WRITE setBothSided NOTIFY bothSidedChanged)
     Q_PROPERTY(float opacity READ opacity WRITE setOpacity NOTIFY opacityChanged)
     Q_PROPERTY(float maskThreshold READ maskThreshold WRITE setMaskThreshold NOTIFY maskThresholdChanged)
-    Q_PROPERTY(float metallic READ metallic WRITE setMetallic NOTIFY metallicChanged)
-    Q_PROPERTY(float roughness READ roughness WRITE setRoughness NOTIFY roughnessChanged)
-    Q_PROPERTY(float normalScale READ normalScale WRITE setNormalScale NOTIFY normalScaleChanged)
-    Q_PROPERTY(float occlusionStrength READ occlusionStrength WRITE setOcclusionStrength NOTIFY occlusionStrengthChanged)
-    Q_PROPERTY(float specularFactor READ specularFactor WRITE setSpecularFactor NOTIFY specularFactorChanged)
-    Q_PROPERTY(float glossinessFactor READ glossinessFactor WRITE setGlossinessFactor NOTIFY glossinessFactorChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
-    Q_PROPERTY(QColor emissive READ emissive WRITE setEmissive NOTIFY emissiveChanged)
     Q_PROPERTY(LiTexture* texture READ texture WRITE setTexture NOTIFY textureChanged)
-    Q_PROPERTY(LiTexture* normalMap READ normalMap WRITE setNormalMap NOTIFY normalMapChanged)
-    Q_PROPERTY(LiTexture* metallicRoughnessMap READ metallicRoughnessMap WRITE setMetallicRoughnessMap NOTIFY metallicRoughnessMapChanged)
-    Q_PROPERTY(LiTexture* occlusionMap READ occlusionMap WRITE setOcclusionMap NOTIFY occlusionMapChanged)
-    Q_PROPERTY(LiTexture* emissiveMap READ emissiveMap WRITE setEmissiveMap NOTIFY emissiveMapChanged)
     Q_PROPERTY(LiTexture* batchTable READ batchTable WRITE setBatchTable NOTIFY batchTableChanged)
     Q_PROPERTY(QQmlListProperty<LiParameter> parameters READ qmlParameters)
+
 public:
-
-    /**
-     * @brief
-     * 创建标准材质的类型
-     */
-    enum Type
-    {
-        UnlitColor, // 不接受光照，只有颜色
-        UnlitTexture, // 不接受光照，带纹理贴图
-        UnlitTextureAlpha, // 不接受光照，带纹理贴图，Alpha透空
-        UnlitTextureArray, // 不接受光照，带纹理贴图，纹理采用纹理阵列
-        UnlitTextureArrayAlpha, // 不接受光照，带纹理贴图，纹理采用纹理阵列，Alpha透空
-        LitColor, // 接受光照，只有颜色
-        LitTexture, // 接受光照，带纹理贴图
-        LitTextureAlpha, // 接受光照，带纹理贴图，Alpha透空
-        LitTextureArray, // 接受光照，带纹理贴图，纹理采用纹理阵列
-        LitTextureArrayAlpha, // 接受光照，带纹理贴图，纹理采用纹理阵列，Alpha透空
-        Water
-    };
-    Q_ENUM(Type)
-
     enum ShadingModel
     {
-        Unlit,
-        Lit,   // default, only lit color or texture
-        PBR,   // physically-based rendering
-        Glass,
-        Cloth,
+        MetallicRoughness,      // default, physically-based rendering (PBR)
+        SpecularGlossiness,
         Subsurface,
-        SpecularGlossiness, // legacy, only for gltf specularGlossiness material
+        Water,
+        Unlit,                  // no lighting
         UserShader
     };
     Q_ENUM(ShadingModel)
+
+    enum Parameter {
+        DiffuseMap,             // LiTexture
+        DiffuseColor,           // QColor
+
+        NormalMap,              // LiTexture
+        NormalScale,            // float
+
+        OcclusionMap,           // LiTexture
+        OcclusionStrength,      // float
+
+        EmissiveMap,            // QColor
+        EmissiveColor,          // QColor
+
+        // MetallicRoughness shading model
+        MetallicRoughnessMap,   // LiTexture
+        Metallic,               // float
+        Roughness,              // float
+        Reflectance,            // float
+        Anisotropy,             // float
+
+        // Subsurface shading model
+        Thickness,              // float
+        SubsurfacePower,        // float
+
+        // SpecularGlossiness shading model
+        SpecularGlossinessMap,  // LiTexture
+        SpecularColor,          // QColor
+        Glossiness              // float
+    };
+    Q_ENUM(Parameter)
 
     enum AlphaMode
     {
@@ -96,106 +95,65 @@ public:
     virtual ~LiMaterial();
 
     /**
-    */
+     * basic propertices
+     */
+
     ShadingModel shadingModel() const;
     void setShadingModel(ShadingModel model);
 
-    /**
-     * basic propertices
-     */
-    LiTexture *texture() const;
-    void setTexture(LiTexture *texture);
     QColor color() const;
     void setColor(const QColor &color);
-    float opacity() const;
-    void setOpacity(float opacity);
-    bool isTransparent() const;
-    void setTransparent(bool transparent);
+
+    LiTexture *texture() const;
+    void setTexture(LiTexture *texture);
+
     AlphaMode alphaMode() const;
     void setAlphaMode(AlphaMode mode);
+
+    float opacity() const;
+    void setOpacity(float opacity);
+
+    bool isTransparent() const;
+    void setTransparent(bool transparent);
+
     float maskThreshold() const;
     void setMaskThreshold(float threshold);
+
     bool bothSided() const;
     void setBothSided(bool bothSided);
+
     bool receiveShadow() const;
-    void setReceiveShadow(bool shadow);
-    QColor postLightingColor() const;
-    void setPostLightingColor(const QColor &color);
+    void setReceiveShadow(bool receive);
 
-    /**
-     * PBR propertices
-     */
-    float metallic() const;
-    void setMetallic(float metallic);
-    float roughness() const;
-    void setRoughness(float roughness);
-    float reflectance() const;
-    void setReflectance(float reflectance);
-    float anisotropy() const;
-    void setAnisotropy(float anisotropy);
-    LiTexture *metallicRoughnessMap() const;
-    void setMetallicRoughnessMap(LiTexture *map);
-    LiTexture *normalMap() const;
-    void setNormalMap(LiTexture *map);
-    float normalScale() const;
-    void setNormalScale(float scale);
-    LiTexture *occlusionMap() const;
-    void setOcclusionMap(LiTexture *map);
-    float occlusionStrength() const;
-    void setOcclusionStrength(float strength);
-    LiTexture *emissiveMap() const;
-    void setEmissiveMap(LiTexture *map);
-    QColor emissive() const;
-    void setEmissive(const QColor &emissive);
-
-    /**
-     * specularGlossiness
-     */
-    float specularFactor() const;
-    void setSpecularFactor(float factor);
-    float glossinessFactor() const;
-    void setGlossinessFactor(float factor);
-
-    LiTexture *reflectionMap() const;
-    void setReflectionMap(LiTexture *reflectionMap);
-    float reflectionAmount() const;
-    void setReflectionAmount(float reflectionAmount);
+    bool castShadow() const;
+    void setCastShadow(bool cast);
 
     LiTexture *batchTable() const;
     void setBatchTable(LiTexture *batchTable);
 
-    bool alphaTest() const;
-    void setAlphaTest(bool alphaTest);
+    Q_INVOKABLE QVariant parameter(const QString &name) const;
+    Q_INVOKABLE void setParameter(const QString &name, const QVariant &value);
 
-    bool instanced() const;
-    void setInstanced(bool instanced);
+    Q_INVOKABLE QVariant parameter(Parameter type) const;
+    Q_INVOKABLE void setParameter(Parameter type, const QVariant &value);
 
+    void addParameter(LiParameter *parameter);
+    void removeParameter(LiParameter *parameter);
+    QVector<LiParameter *> parameters() const;
+    QQmlListProperty<LiParameter> qmlParameters();
+
+    // user shaders
     LiShaderProgram *shaderProgram(Pass pass = ColorPass) const;
     void setShaderProgram(LiShaderProgram *shaderProgram, Pass pass = ColorPass);
 
     /**
      * @brief
-     * 返回RenderState对象
+     * 返回该材质使用的渲染状态(RenderState)对象
      * @return LiRenderState
      */
     LiRenderState *renderState() const;
 
-    void setParameter(const QString &name, const QVariant &value);
-    void addParameter(const QString &name, const QVariant &value);
-    void addParameter(LiParameter *parameter);
-    void removeParameter(LiParameter *parameter);
-    LiParameter *parameter(const QString &name) const;
-    QVector<LiParameter *> parameters() const;
-    QQmlListProperty<LiParameter> qmlParameters();
-
-    /**
-     * @brief
-     * 创建标准材质
-     * @param type
-     * 标准材质类型
-     * @return LiMaterial
-     */
-    Q_INVOKABLE static LiMaterial *fromType(Type type);
+    static LiMaterial *fromType(ShadingModel shadingModel);
 
 Q_SIGNALS:
     void shadingModelChanged();
@@ -204,25 +162,12 @@ Q_SIGNALS:
     void opacityChanged();
     void alphaModeChanged();
     void maskThresholdChanged();
-    void receiveShadowChanged();
-    void postLightingColorChanged();
-    void metallicChanged();
-    void roughnessChanged();
-    void reflectanceChanged();
-    void anisotropyChanged();
-    void metallicRoughnessMapChanged();
-    void normalMapChanged();
-    void normalScaleChanged();
-    void occlusionMapChanged();
-    void occlusionStrengthChanged();
-    void emissiveMapChanged();
-    void emissiveChanged();
-    void specularFactorChanged();
-    void glossinessFactorChanged();
     void bothSidedChanged();
-    void instancedChanged();
+    void receiveShadowChanged();
+    void castShadowChanged();
     void batchTableChanged();
     void shaderProgramChanged();
+    void shaderKeyChanged();
 
 protected:
     explicit LiMaterial(LiMaterialPrivate &dd, LiNode *parent = nullptr);

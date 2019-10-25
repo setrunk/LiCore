@@ -12,7 +12,6 @@ class LiToneMapping;
 class LiRenderViewport;
 class LiWaterParameters;
 class LiRenderSystemPrivate;
-class SMAA;
 
 /**
  * @brief
@@ -25,7 +24,6 @@ class LICORE_EXPORT LiRenderSystem : public LiAbstractSystem
     Q_PROPERTY(LiToneMapping* toneMapping READ toneMapping)
     Q_PROPERTY(LiPostRendering* postRendering READ postRendering)
     Q_PROPERTY(LiWaterParameters* waterParameters READ waterParameters)
-    Q_PROPERTY(SMAA* smaa READ smaa)
 public:
     /**
      * @brief
@@ -92,11 +90,6 @@ public:
     LiAmbientOcclusion *ssao() const;
 
     /**
-     * 返回全屏抗锯齿SMAA对象
-     */
-    SMAA *smaa() const;
-
-    /**
      * @brief
      * 返回HDR渲染的色调映射参数控制对象
      * @return LiToneMapping
@@ -138,13 +131,17 @@ public:
      */
     QVector<LiRenderViewport *> renderViewports() const;
 
+    void render();
+
+signals:
+    void beforeRendering();
+    void afterRendering();
+
 private:
     void onEngineShutdown();
     void beginFrame();
     void update();
     void endFrame();
-    void render(LiCamera *camera);
-    void draw(LiEntity *entity);
     Q_DECLARE_PRIVATE(LiRenderSystem)
     friend class LiScene;
 };

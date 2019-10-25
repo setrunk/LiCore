@@ -4,6 +4,7 @@
 #include "licore_global.h"
 
 class LiTexture;
+class LiBuffer;
 
 class LICORE_EXPORT LiWaterParameters : public QObject
 {
@@ -25,6 +26,8 @@ public:
     float sunMultiplier() const;
     float fresnelScale() const;
     QColor waterColor() const;
+
+    LiBuffer *uniformBuffer();
 
     LiTexture *envMapSamplerRefl() const
     {
@@ -79,14 +82,15 @@ signals:
 
 private:
     float m_softIntersectionFactor = 1.0f;
-    float m_reflectionAmount = 0.7f;
-    float m_reflectionNoise = 0.075f;
-    float m_whiteCapsAmount = 1.0f;
-    float m_sunMultiplier = 2.0f;
-    float m_fresnelScale = 2.5f;
-    QColor m_waterColor = QColor(18, 75, 102);
+    float m_reflectionAmount = 0.75f;
+    float m_reflectionNoise = 0.038f;
+    float m_whiteCapsAmount = 0.75f;
+    float m_sunMultiplier = 50.0f;
+    float m_fresnelScale = 1.5f;
+    QColor m_waterColor = QColor(5, 26, 31);
 //    QColor m_waterColor = QColor(31, 82, 88);
 
+    LiBuffer *m_uniformBuffer = nullptr;
     LiTexture *_envMapSamplerRefl = nullptr;
     LiTexture *_oceanBumpMapSampler = nullptr;
     LiTexture *_foamSampler = nullptr;
