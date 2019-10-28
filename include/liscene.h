@@ -16,6 +16,8 @@ class Globe;
 class MapProjection;
 class LiWidget;
 class LiSkybox;
+class LiLight;
+class LiIndirectLight;
 class LiFog;
 class LiSun;
 class LiAtmosphere;
@@ -29,6 +31,7 @@ class LICORE_EXPORT LiScene : public QObject
     Q_PROPERTY(LiCamera* mainCamera READ mainCamera)
     Q_PROPERTY(LiSkybox* skybox READ skybox)
     Q_PROPERTY(LiSun* sun READ sun)
+    Q_PROPERTY(LiIndirectLight* indirectLight READ indirectLight)
     Q_PROPERTY(LiAtmosphere* atmosphere READ atmosphere)
     Q_PROPERTY(Globe* globe READ globe)
     Q_PROPERTY(LiFog* fog READ fog)
@@ -53,6 +56,7 @@ public:
     LiCamera *mainCamera() const;
     LiSkybox *skybox() const;
     LiSun *sun() const;
+    LiIndirectLight *indirectLight() const;
     Globe *globe() const;
     LiFog *fog() const;
     LiAtmosphere *atmosphere() const;

@@ -4,7 +4,7 @@
 #include "licomponent.h"
 
 class LiToneMappingPrivate;
-class LiRenderSystem;
+class LiPostRendering;
 
 /**
  * @brief
@@ -107,7 +107,7 @@ signals:
 
 private:
     Q_DECLARE_PRIVATE(LiToneMapping)
-    friend class LiRenderSystem;
+    friend class LiPostRendering;
 };
 
 #endif // LITONEMAPPING_H

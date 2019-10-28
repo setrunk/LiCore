@@ -8,6 +8,12 @@ class LiLightPrivate;
 class LICORE_EXPORT LiLight : public LiComponent
 {
     Q_OBJECT
+    Q_PROPERTY(Type type READ type WRITE setType NOTIFY typeChanged)
+    Q_PROPERTY(float range READ range WRITE setRange NOTIFY rangeChanged)
+    Q_PROPERTY(float spotAngle READ spotAngle WRITE setSpotAngle NOTIFY spotAngleChanged)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(QColor ambient READ ambient WRITE setAmbient NOTIFY ambientChanged)
+    Q_PROPERTY(float intensity READ intensity WRITE setIntensity NOTIFY intensityChanged)
 public:
     enum Type
     {

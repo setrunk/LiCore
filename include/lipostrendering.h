@@ -1,8 +1,9 @@
 #ifndef LIPOSTRENDERING_H
 #define LIPOSTRENDERING_H
 
-#include "linode.h"
+#include "licore_global.h"
 
+class LiToneMapping;
 class LiPostRenderingPrivate;
 
 class LICORE_EXPORT LiPostRendering : public QObject
@@ -22,8 +23,27 @@ class LICORE_EXPORT LiPostRendering : public QObject
     Q_PROPERTY(float filterColorDensity READ filterColorDensity WRITE setFilterColorDensity NOTIFY filterColorDensityChanged)
     Q_PROPERTY(QColor selectiveColor READ selectiveColor WRITE setSelectiveColor NOTIFY selectiveColorChanged)
     Q_PROPERTY(QVector4D selectiveColorCMYK READ selectiveColorCMYK WRITE setSelectiveColorCMYK NOTIFY selectiveColorCMYKChanged)
+    Q_PROPERTY(QVector4D filmCurve READ filmCurve WRITE setFilmCurve NOTIFY filmCurveChanged)
+    Q_PROPERTY(QVector3D colorBalance READ colorBalance WRITE setColorBalance NOTIFY colorBalanceChanged)
+    Q_PROPERTY(QVector2D eyeAdaption READ eyeAdaption WRITE setEyeAdaption NOTIFY eyeAdaptionChanged)
+    Q_PROPERTY(bool fxaa READ fxaa WRITE setFxaa NOTIFY fxaaChanged)
+    Q_PROPERTY(LiToneMapping* toneMapping READ toneMapping)
 public:
     explicit LiPostRendering(QObject *parent = nullptr);
+
+    LiToneMapping *toneMapping() const;
+
+    QVector4D filmCurve() const;
+    void setFilmCurve(const QVector4D &filmCurve);
+
+    QVector2D eyeAdaption() const;
+    void setEyeAdaption(const QVector2D &eyeAdaption);
+
+    bool fxaa() const;
+    void setFxaa(bool fxaa);
+
+    QVector3D colorBalance() const;
+    void setColorBalance(const QVector3D &colorBalance);
 
     // adjust color
     bool adjustColorEnabled() const;
@@ -73,6 +93,10 @@ public:
     void setColorChartEnabled(bool colorChartEnabled);
 
 signals:
+    void fxaaChanged();
+    void colorBalanceChanged();
+    void filmCurveChanged();
+    void eyeAdaptionChanged();
     void adjustColorEnabledChanged();
     void adjustLevelsEnabledChanged();
     void filterColorEnabledChanged();

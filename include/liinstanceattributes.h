@@ -26,6 +26,7 @@ public:
 
     LiGeometryAttribute *attribute(const QString &name) const;
     QVector<LiGeometryAttribute*> attributes() const;
+
     void addAttribute(LiGeometryAttribute *attribute);
 
     QVector<LiBuffer *> vertexBuffers() const;

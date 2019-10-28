@@ -26,7 +26,7 @@ class LICORE_EXPORT LiImageParticleRenderer : public LiParticleRenderer
     Q_PROPERTY(LiParticleDirection* xVector READ xVector WRITE setXVector NOTIFY xVectorChanged RESET resetDeformation)
     Q_PROPERTY(LiParticleDirection* yVector READ yVector WRITE setYVector NOTIFY yVectorChanged RESET resetDeformation)
     Q_PROPERTY(Vector4 imageScaleAndTranslation READ imageScaleAndTranslation WRITE setImageScaleAndTranslation NOTIFY imageScaleAndTranslationChanged)
-    Q_PROPERTY(AlignedAxis alignedAxis READ alignedAxis WRITE setAlignedAxis NOTIFY alignedAxisChanged)
+    Q_PROPERTY(Vector3 alignedAxis READ alignedAxis WRITE setAlignedAxis NOTIFY alignedAxisChanged)
 
 public:
     explicit LiImageParticleRenderer(LiNode *parent = 0);
@@ -56,15 +56,6 @@ public:
     };
     Q_ENUM(BlendMode)
 
-    enum AlignedAxis
-    {
-        AlignedScreen, // default
-        AlignedXAxis,
-        AlignedYAxis,
-        AlignedZAxis
-    };
-    Q_ENUM(AlignedAxis)
-
     Status status() const;
     EntryEffect entryEffect() const;
     QUrl image() const;
@@ -79,7 +70,7 @@ public:
     qreal rotationVelocity() const;
     qreal rotationVelocityVariation() const;
     bool autoRotation() const;
-    AlignedAxis alignedAxis() const;
+    Vector3 alignedAxis() const; // Vector3(0,0,0) = faceCamera
     Vector4 imageScaleAndTranslation() const; // xy = translation, zw = scale
 
     LiParticleDirection *xVector() const;
@@ -105,7 +96,7 @@ Q_SIGNALS:
     void xVectorChanged(LiParticleDirection* arg);
     void yVectorChanged(LiParticleDirection* arg);
     void imageScaleAndTranslationChanged(const Vector4 &);
-    void alignedAxisChanged(AlignedAxis);
+    void alignedAxisChanged(const Vector3 &);
 
 public Q_SLOTS:
     void setEntryEffect(EntryEffect arg);
@@ -123,7 +114,7 @@ public Q_SLOTS:
     void setXVector(LiParticleDirection* arg);
     void setYVector(LiParticleDirection* arg);
     void setImageScaleAndTranslation(const Vector4 &v);
-    void setAlignedAxis(AlignedAxis axis);
+    void setAlignedAxis(const Vector3 &axis);
 
 private:
     friend class LiParticleSystem;

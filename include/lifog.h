@@ -29,7 +29,7 @@ signals:
     void densityChanged();
 
 private:
-    QSharedPointer<LiFogPrivate> d;
+    Q_DECLARE_PRIVATE(LiFog)
 };
 
 #endif // LIFOG_H

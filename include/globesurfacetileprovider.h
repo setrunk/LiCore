@@ -259,25 +259,6 @@ private:
     /**
      * @brief
      *
-     * @param textureLen
-     * @param quantization
-     * @param showReflectiveOcean
-     * @param decal
-     * @return LiShaderProgram
-     */
-    LiShaderProgram *getShaderProgramFromCache(int textureLen,
-                                               bool quantization,
-                                               bool showReflectiveOcean,
-                                               bool showDecal,
-                                               bool applyAlpha,
-                                               bool applyBrightness,
-                                               bool applyContrast,
-                                               bool applyHue,
-                                               bool applySaturation,
-                                               bool applyGamma);
-    /**
-     * @brief
-     *
      * @param tile
      * @param viewMatrix
      * @return Matrix4

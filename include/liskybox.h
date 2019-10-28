@@ -11,12 +11,12 @@ class LICORE_EXPORT LiSkybox : public LiGeometryRenderer
 public:
     explicit LiSkybox(LiNode *parent = nullptr);
 
-    Q_INVOKABLE void setPositiveX(const QString &url);
-    Q_INVOKABLE void setNegativeX(const QString &url);
-    Q_INVOKABLE void setPositiveY(const QString &url);
-    Q_INVOKABLE void setNegativeY(const QString &url);
-    Q_INVOKABLE void setPositiveZ(const QString &url);
-    Q_INVOKABLE void setNegativeZ(const QString &url);
+    Q_INVOKABLE void setPositiveX(const QUrl &url);
+    Q_INVOKABLE void setNegativeX(const QUrl &url);
+    Q_INVOKABLE void setPositiveY(const QUrl &url);
+    Q_INVOKABLE void setNegativeY(const QUrl &url);
+    Q_INVOKABLE void setPositiveZ(const QUrl &url);
+    Q_INVOKABLE void setNegativeZ(const QUrl &url);
 
 private:
     Q_DECLARE_PRIVATE(LiSkybox)

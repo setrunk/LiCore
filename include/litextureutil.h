@@ -2,8 +2,7 @@
 #define LITEXTUREUTIL_H
 
 #include "licore_global.h"
-
-struct TextureImageData;
+#include "liimagedata.h"
 
 /**
  * @brief
@@ -82,7 +81,7 @@ public:
      * @param autoMipMaps
      * @return QSharedPointer<TextureImageData>
      */
-    static QSharedPointer<TextureImageData> compressImageDXT(const QImage &image, bool autoMipMaps = true);
+    static QSharedPointer<LiImageData> compressImageDXT(const QImage &image, bool autoMipMaps = true);
 
     /**
      * @brief
@@ -91,7 +90,7 @@ public:
      * @param skipMipLevels
      * @return QSharedPointer<TextureImageData>
      */
-    static QSharedPointer<TextureImageData> loadDDS(const QByteArray &data, int skipMipLevels = 0);
+    static QSharedPointer<LiImageData> loadDDS(const QByteArray &data, int skipMipLevels = 0);
 
     /**
      * @brief
