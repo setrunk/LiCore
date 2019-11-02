@@ -13,11 +13,11 @@ class LICORE_EXPORT LiBatchTable : public LiNode
 public:
     enum ComponentDataType
     {
-        Color,
-        Float,
-        Vec2,
-        Vec3,
-        Vec4
+        Color,  // QColor
+        Float,  // float
+        Vec2,   // Vector2 or QVector2D
+        Vec3,   // Vector3 or QVector3D
+        Vec4    // Vector4 or QVector4D
     };
     Q_ENUM(ComponentDataType)
 
@@ -26,7 +26,6 @@ public:
     int width() const;
     int height() const;
     int stride() const;
-    Vector4 textureStep() const;
     LiTexture *texture() const;
 
     int numberOfInstances() const;

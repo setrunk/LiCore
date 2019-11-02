@@ -14,6 +14,7 @@ class LiRaycastHit;
 class LiRenderSystem;
 class LiGeometryRendererPrivate;
 class LiBatchTable;
+class LiFeature;
 
 /**
  * @brief
@@ -242,6 +243,9 @@ public:
      * @param batchTable
      */
     void setBatchTable(LiBatchTable *batchTable);
+
+    LiFeature *feature() const;
+    void setFeature(LiFeature *feature);
 
     QVector<Matrix4> bones() const;
     void setBones(const QVector<Matrix4> &bones);

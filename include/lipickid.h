@@ -6,13 +6,15 @@
 class LICORE_EXPORT LiPickId
 {
 public:
-    explicit LiPickId(uint key = 0);
+    explicit LiPickId(uint id = 0);
 
-    uint key() const { return m_key; }
+    uint id() const { return m_id; }
+    bool isNull() const { return m_id == 0; }
     QColor color() const;
+    static LiPickId fromColor(const QColor &color);
 
 private:
-    uint m_key = 0;
+    uint m_id = 0;
 };
 
 Q_DECLARE_METATYPE(LiPickId)

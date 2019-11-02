@@ -1,4 +1,4 @@
-#ifndef LICLIPVOLUME_H
+﻿#ifndef LICLIPVOLUME_H
 #define LICLIPVOLUME_H
 
 #include "licomponent.h"
@@ -27,9 +27,9 @@ public:
 
     enum ClipFlag
     {
-        ClipGlobe = 0x01,  // 只裁切地球地形
-        ClipScene = 0x02,  // 裁切除了地球以外的物体
-        ClipAll = ClipGlobe | ClipScene  // 裁切所有场景物体，包括地球
+        ClipGlobe = 0x01,
+        ClipScene = 0x02,
+        ClipAll = ClipGlobe | ClipScene
     };
     Q_ENUM(ClipFlag)
 

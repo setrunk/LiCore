@@ -38,3 +38,24 @@ Change Log
     * Morphing Targets，变形动画
     * Animations，动画模块
     
+- 2019-11-02
+
+- 更新场景裁切体LiClipVolume类，修复某些情况下，场景物体无法渲染的问题。
+
+- 完善屏幕拾取功能，可以根据模型的BatchId进行拾取，也可以根据材质拾取：
+	* 使用LiScene.pickFeature函数进行拾取；
+	* 使用LiScene.setSelectedFeature函数进行物体高亮显示；
+	* 使用LiScene.setFeatureSelectedColor函数设置高亮颜色;
+	* 具体使用方法请参考Sample.cpp的pickFeature函数；
+
+- 自定义物体拾取，自定义LiFeature属性：
+	* 创建LiFeature对象；
+	* 设置自定义属性；
+	* 使用LiGeometryRenderer.setFeature函数进行绑定；
+	* 使用LiScene.pickFeature函数进行拾取；
+	* 在Sample.cpp的createWaterMaterial函数有详细使用方法；
+
+- 完善LiBatchTable类：
+	* 支持Color, Float, Vec2, Vec3, Vec4类型属性数据；
+	* LiBatchTable.addAttribute函数可以添加任意类型进行混合，最多支持8个属性；
+	* 在Shader中可以根据InstanceId和AttributeId进行属性采样，可以进行对应的属性类型采样；

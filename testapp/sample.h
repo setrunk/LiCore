@@ -9,6 +9,7 @@ class Li3DTileset;
 //////////////////////////////////////////////////////
 // tileset
 void load3DTileset(LiScene *scene); // 加载3DTiles
+void load3DTileset(const QString &uri); // 加载3DTiles
 void flytoTileset(Li3DTileset *tileset); // 摄像机飞到3DTiles包围盒
 void flattenMaskTileset(Li3DTileset *tileset); // 压平遮罩
 void highlightTileset(Li3DTileset *tileset); // 透明叠加效果
@@ -17,7 +18,7 @@ void moveTilesetByMouse(Li3DTileset *tileset); // 设置3DTiles的位置
 
 void loadDEM(LiScene *scene);
 void loadDOM(LiScene *scene);
-void loadModel(LiScene *scene, const QString &path, const Cartographic &lonlat);
+void loadModel(LiScene *scene, const QString &path, const Cartographic &lonlat, double scale = 1.0);
 void loadTrees(LiScene *scene);
 void loadCarAnimation(LiScene *scene);
 void loadQuadtreeTileset();
@@ -38,5 +39,7 @@ void controlTime();
 void loadWMS();
 void loadPMTS();
 void flattenTerrain();
+
+void createFps();
 
 #endif // SAMPLE_H

@@ -28,7 +28,6 @@ class LICORE_EXPORT LiMaterial : public LiNode
     Q_PROPERTY(float maskThreshold READ maskThreshold WRITE setMaskThreshold NOTIFY maskThresholdChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(LiTexture* texture READ texture WRITE setTexture NOTIFY textureChanged)
-    Q_PROPERTY(LiTexture* batchTable READ batchTable WRITE setBatchTable NOTIFY batchTableChanged)
     Q_PROPERTY(QQmlListProperty<LiParameter> parameters READ qmlParameters)
 
 public:
@@ -128,14 +127,12 @@ public:
     bool castShadow() const;
     void setCastShadow(bool cast);
 
-    LiTexture *batchTable() const;
-    void setBatchTable(LiTexture *batchTable);
-
     Q_INVOKABLE QVariant parameter(const QString &name) const;
     Q_INVOKABLE void setParameter(const QString &name, const QVariant &value);
 
     Q_INVOKABLE QVariant parameter(Parameter type) const;
     Q_INVOKABLE void setParameter(Parameter type, const QVariant &value);
+    Q_INVOKABLE bool hasParameter(Parameter type) const;
 
     void addParameter(LiParameter *parameter);
     void removeParameter(LiParameter *parameter);
@@ -165,9 +162,7 @@ Q_SIGNALS:
     void bothSidedChanged();
     void receiveShadowChanged();
     void castShadowChanged();
-    void batchTableChanged();
     void shaderProgramChanged();
-    void shaderKeyChanged();
 
 protected:
     explicit LiMaterial(LiMaterialPrivate &dd, LiNode *parent = nullptr);

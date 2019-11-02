@@ -3,7 +3,6 @@
 
 #include "licore_global.h"
 #include "lipickid.h"
-#include "lifeature.h"
 #include "ray.h"
 #include "plane.h"
 
@@ -22,6 +21,7 @@ class LiFog;
 class LiSun;
 class LiAtmosphere;
 class LiRaycastHit;
+class LiFeature;
 
 class LICORE_EXPORT LiScene : public QObject
 {
@@ -85,6 +85,12 @@ public:
     bool pickPositionSupported() const;
     double terrainExaggeration() const;
 
+    LiFeature *selectedFeature() const;
+    void setSelectedFeature(LiFeature *feature);
+
+    QColor featureSelectedColor() const;
+    void setFeatureSelectedColor(const QColor &color);
+
     LiPickId createPickId(LiFeature *feature);
     LiFeature *getFeatureByPickId(const LiPickId &pickId);
     QFuture<LiPickId> pickFeature(int x, int y); // window position
@@ -95,10 +101,7 @@ public:
 
 signals:
     void sceneModeChanged();
-    void enterPicked(uint pickId);
-    void leavePicked(uint pickId);
     void clipPlaneEnabledChanged(int index);
-    void clipVolumeChanged();
 
 public slots:
     void addEventListener(const QString &type, const QJSValue &listener, bool useCapture = false);

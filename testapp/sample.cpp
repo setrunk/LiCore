@@ -32,6 +32,7 @@
 #include <lipickid.h>
 #include <lifeature.h>
 #include <liviewshed.h>
+#include <liwidget.h>
 #include <liplanegeometry.h>
 #include <limaterial.h>
 #include <lishaderprogram.h>
@@ -43,6 +44,7 @@
 #include "li3dtile.h"
 #include "lirenderstate.h"
 #include "limesh.h"
+#include "lianimator.h"
 
 #include <liparticlesystem.h>
 #include <liimageparticlerenderer.h>
@@ -50,6 +52,42 @@
 #include <directions/lipointdirection.h>
 #include <extruders/lirectangleextruder.h>
 #include <affectors/ligravityaffector.h>
+
+class Fps : public LiBehavior
+{
+public:
+    void update() override {
+        static quint64 frameId = 0;
+        static quint64 lastTime = 0;
+        static quint64 lastFrameId = 0;
+
+        quint64 t = GlobalViewer()->engine()->timeSystem()->timeStamp();
+
+        if (t - lastTime > 1e6) {
+            double t2 = (t - lastTime) * 1e-6;
+            double fps = (frameId - lastFrameId) / t2;
+            lastTime = t;
+            lastFrameId = frameId;
+            GlobalViewer()->widget()->widget()->setWindowTitle(QString("Viewer - fps(%1)").arg(int(fps+0.5)));
+        }
+
+        ++frameId;
+
+        LiInputSystem *input = GlobalViewer()->engine()->inputSystem();
+        if (input->getMouseButtonDown(Qt::LeftButton)) {
+            LiCamera *camera = LiCamera::main();
+            Vector3 pos = camera->transform()->worldPosition();
+            qDebug() << "camera:" << pos.length();
+        }
+    }
+};
+
+void createFps()
+{
+    LiEntity *entity = new LiEntity;
+    entity->addComponent(new Fps);
+    GlobalViewer()->scene()->addEntity(entity);
+}
 
 void loadDEM(LiScene *scene)
 {
@@ -132,28 +170,45 @@ void loadDOM(LiScene *scene)
     }
 }
 
-void loadModel(LiScene *scene, const QString &path, const Cartographic &lonlat)
+void loadModel(LiScene *scene, const QString &path, const Cartographic &lonlat, double scale)
 {
-    QUrl url = resolvedUrl(path);
-    LiSceneLoader *loader = LiSceneIOFactory::createSceneLoader(QUrl(url.path()));
-    if (loader)
-    {
-        QVariantMap options;
-        auto promise = loader->load(url, options);
-        observe(promise).subscribe([=]() {
-            loader->deleteLater();
-            LiEntity *entity = loader->scene();
-            if (entity) {
-                LiEntity *parentEntity = new LiEntity();
-                parentEntity->transform()->setCartographic(lonlat/*Cartographic::fromDegrees(114.054494, 22.540745, 0)*/);
-                scene->addEntity(parentEntity);
-//                entity->transform()->setPosition(Vector3(0, 0, 100));
-//                entity->transform()->setScale(10);
-                entity->transform()->setRotation(Quaternion::fromAxisAndAngle(1,0,0,90));
-                entity->setParent(parentEntity);
-//                scene->mainCamera()->flyTo(lonlat);
-            }
-        });
+    int count = 1;
+    for (int i = 0; i < count; ++i) {
+        QUrl url = resolvedUrl(path);
+        LiSceneLoader *loader = LiSceneIOFactory::createSceneLoader(QUrl(url.path()));
+        if (loader)
+        {
+            QVariantMap options;
+            auto promise = loader->load(url, options);
+            observe(promise).subscribe([=]() {
+                loader->deleteLater();
+                LiEntity *entity = loader->scene();
+                if (entity) {
+                    LiAnimator *animator = entity->component<LiAnimator>();
+                    if (animator) {
+                        LiInputSystem *input = GlobalViewer()->engine()->inputSystem();
+                        QObject::connect(input, &LiInputSystem::keyDown, [=](int key) {
+                            if (key == Qt::Key_P) {
+                                animator->setRunning(!animator->isRunning());
+                            } else if (key == Qt::Key_N) {
+                                int clip = (animator->currentClip() + 1) % animator->clipCount();
+                                animator->setCurrentClip(clip);
+                            } else if (key == Qt::Key_M) {
+                                int mode = (animator->playMode() + 1) % 3;
+                                animator->setPlayMode((LiAnimator::PlayMode)mode);
+                            }
+                        });
+                    }
+                    LiEntity *parentEntity = new LiEntity();
+                    parentEntity->transform()->setCartographic(lonlat/*Cartographic::fromDegrees(114.054494, 22.540745, 0)*/);
+                    entity->transform()->setPosition(Vector3(i*20, 0, 0));
+                    entity->transform()->setScale(10);
+                    entity->transform()->setRotation(Quaternion::fromAxisAndAngle(1,0,0,90));
+                    entity->setParent(parentEntity);
+                    scene->addEntity(parentEntity);
+                }
+            });
+    }
     }
 }
 
@@ -163,8 +218,8 @@ void loadTrees(LiScene *scene)
     if (1)
     {
         LiForest *forest = new LiForest();
-        forest->setBaseUrl(QUrl("file:///D:/download/TeraScene/Data/Trees/"));
-        forest->load(QUrl("file:///D:/download/TeraScene/Data/Trees/szcenter.STF"));
+        forest->setBaseUrl(QUrl("file:///D:/work/LiEngine/others/trees/"));
+        forest->load(QUrl("file:///D:/work/LiEngine/others/trees/szcenter.STF"));
         forest->setHeightMode(LiForest::RelativeToGround);
         forest->setAltitude(1.0);
 
@@ -172,10 +227,40 @@ void loadTrees(LiScene *scene)
         entity->transform()->setCartographic(Cartographic::fromDegrees(114.054494, 22.540745, 0));
         entity->addComponent(forest);
         scene->addEntity(entity);
+
+        LiInputSystem *input = GlobalViewer()->engine()->inputSystem();
+        QObject::connect(input, &LiInputSystem::keyDown, [=](int key) {
+            static float roughness = 1.f;
+            static float thickness = 0.5f;
+            if (key == Qt::Key_F1) {
+                float step = input->getKey(Qt::Key_Shift) ? 0.1f : 0.01f;
+                roughness = std::min(1.f, roughness+step);
+                forest->setProperty("roughness", roughness);
+                qDebug() << forest->property("roughness").toDouble();
+            }
+            if (key == Qt::Key_F2) {
+                float step = input->getKey(Qt::Key_Shift) ? 0.1f : 0.01f;
+                roughness = std::max(0.f, roughness-step);
+                forest->setProperty("roughness", roughness);
+                qDebug() << forest->property("roughness").toDouble();
+            }
+            if (key == Qt::Key_F3) {
+                float step = input->getKey(Qt::Key_Shift) ? 0.1f : 0.01f;
+                thickness = std::min(1.f, thickness+step);
+                forest->setProperty("thickness", thickness);
+                qDebug() << forest->property("thickness").toDouble();
+            }
+            if (key == Qt::Key_F4) {
+                float step = input->getKey(Qt::Key_Shift) ? 0.1f : 0.01f;
+                thickness = std::max(0.f, thickness-step);
+                forest->setProperty("thickness", thickness);
+                qDebug() << forest->property("thickness").toDouble();
+            }
+        });
     }
 
     // load from vector layer
-    if (1)
+    if (0)
     {
 //        QgsVectorLayer *vectorLayer = new QgsVectorLayer("C:/Users/apple/Documents/Projects/LiEngine/others/trees/tree.shp", "tree", "ogr", false);
 
@@ -364,6 +449,17 @@ void load3DTileset(LiScene *scene)
 {
     Li3DTileset *tileset;
     LiEntity *entity;
+
+    if (1)
+    {
+        tileset = new Li3DTileset(QString::fromLocal8Bit("D:/Models/香港机场/out/tileset.json"));
+        tileset->setClampedTerrain(false); // 贴地模式 (默认为true)
+        entity = new LiEntity;
+        entity->addComponent(tileset);
+        scene->addEntity(entity);
+        flytoTileset(tileset);
+    }
+
 
     if (0)
     {
@@ -694,8 +790,8 @@ void loadQuadtreeTileset()
 void createTextureProjection()
 {
     LiTextureImage *image = new LiTextureImage();
-    auto promise = image->loadImage(resolvedTextureUrl("qt-logo.png"));
-//    auto promise = image->loadImage(resolvedTextureUrl("test.jpg"));
+//    auto promise = image->loadImage(resolvedTextureUrl("qt-logo.png"));
+    auto promise = image->loadImage(resolvedTextureUrl("test.jpg"));
     observe(promise).subscribe([image] {
         LiTexture *tex = new LiTexture2D();
         tex->addTextureImage(image);
@@ -713,7 +809,7 @@ void createTextureProjection()
             LiTextureProjection *texProjection = new LiTextureProjection();
             texProjection->setTexture(tex);
             texProjection->setShowFrustum(true);
-            texProjection->setBlendMode(LiTextureProjection::AlphaBlend);
+//            texProjection->setBlendMode(LiTextureProjection::AlphaBlend);
             texProjection->setSceneMode(LiTextureProjection::TerrainOnly);
 
             if (i % 2 == 0)
@@ -744,8 +840,9 @@ void pickFeature(LiScene *scene)
         auto promise = scene->pickFeature(p);
 
         observe(promise).subscribe([=](LiPickId pickId) {
-            qDebug() << "pickId:" << pickId.key();
+            qDebug() << "pickId:" << pickId.id();
             auto feature = scene->getFeatureByPickId(pickId);
+            scene->setSelectedFeature(feature);
             if (feature) {
                 const auto names = feature->propertyNames();
                 for (const auto &name : names) {
@@ -830,7 +927,7 @@ void createPlane(LiScene *scene)
     LiTexture *tex = new LiTexture2D();
     tex->addTextureImage(texImage);
 
-    LiMaterial *mat = LiMaterial::fromType(LiMaterial::LitTexture);
+    LiMaterial *mat = new LiMaterial;
     mat->setTexture(tex);
 
     LiGeometryRenderer *renderer = new LiGeometryRenderer();
@@ -884,11 +981,11 @@ void createFire(LiScene *scene)
         emitter->setShapeType(LiParticleEmitter::Ellipse);
         emitter->setShapeSize(Vector2(200, 100));
         emitter->setFillShape(false);
-        emitter->setParticlesPerSecond(300);
+        emitter->setParticlesPerSecond(30);
         emitter->setParticleDuration(3000); // 3 seconds
-        emitter->setParticleSize(12);
-        emitter->setParticleEndSize(2);
-        emitter->setParticleSizeVariation(4);
+        emitter->setParticleSize(Vector2(12,12));
+//        emitter->setParticleEndSize(Vector2(2,2));
+//        emitter->setParticleSizeVariation(Vector2(4,4));
         emitter->setOffset(Vector3(100, 100, 30));
 
         // velocity
@@ -912,7 +1009,7 @@ void createFire(LiScene *scene)
     }
 
     // fire 2
-    if (1)
+    if (0)
     {
         LiParticleEmitter *emitter = new LiParticleEmitter(particleSystem);
         emitter->setShapeType(LiParticleEmitter::Rectangle);
@@ -920,9 +1017,9 @@ void createFire(LiScene *scene)
         emitter->setFillShape(true);
         emitter->setParticlesPerSecond(50);
         emitter->setParticleDuration(3500); // 3.5 seconds
-        emitter->setParticleSize(12);
-        emitter->setParticleEndSize(2);
-        emitter->setParticleSizeVariation(4);
+//        emitter->setParticleSize(12);
+//        emitter->setParticleEndSize(2);
+//        emitter->setParticleSizeVariation(4);
         emitter->setOffset(Vector3(-100, 100, 0));
 
         // velocity
@@ -942,7 +1039,7 @@ void createFire(LiScene *scene)
     }
 
     // fire 3
-    if (1)
+    if (0)
     {
         LiParticleEmitter *emitter = new LiParticleEmitter(particleSystem);
         emitter->setShapeType(LiParticleEmitter::Line);
@@ -950,9 +1047,9 @@ void createFire(LiScene *scene)
         emitter->setFillShape(false);
         emitter->setParticlesPerSecond(200);
         emitter->setParticleDuration(3500); // 3.5 seconds
-        emitter->setParticleSize(12);
-        emitter->setParticleEndSize(2);
-        emitter->setParticleSizeVariation(4);
+//        emitter->setParticleSize(12);
+//        emitter->setParticleEndSize(2);
+//        emitter->setParticleSizeVariation(4);
         emitter->setOffset(Vector3(-100, -100, 0));
 
         // velocity
@@ -974,6 +1071,7 @@ void createFire(LiScene *scene)
     LiImageParticleRenderer *renderer = new LiImageParticleRenderer(particleSystem);
     renderer->setColor(QColor::fromRgba(0x8fff400f));
     renderer->setColorVariation(0.1);
+//    renderer->setAlignedAxis(Vector3::xAxis);
     particleSystem->registerParticleRenderer(renderer);
 
     LiEntity *entity = new LiEntity();
@@ -1037,8 +1135,9 @@ void createLights(LiScene *scene)
             Vector3 pos(x * space, y * space, 100);
 
             LiLight *light = new LiLight(LiLight::Point);
-            light->setRange(180);
+            light->setRange(250);
             light->setColor(QColor(200, 100, 20));
+            light->setIntensity(2.5f);
 
             LiEntity *ent = new LiEntity(parent);
             ent->transform()->setPosition(pos);
@@ -1099,10 +1198,8 @@ void createClipVolume(LiScene *scene)
 
 void createWaterMaterial(LiScene *scene)
 {
-    LiMaterial *mat = LiMaterial::fromType(LiMaterial::Water);
-//    LiMaterial *mat = new LiMaterial();
-//    mat->setColor(Qt::cyan);
-//    mat->setOpacity(0.5f);
+    LiMaterial *mat = new LiMaterial();
+    mat->setShadingModel(LiMaterial::Water);
 
     LiPlaneGeometry *geometry = new LiPlaneGeometry();
     geometry->setWidth(1000);
@@ -1113,7 +1210,12 @@ void createWaterMaterial(LiScene *scene)
     LiGeometryRenderer *renderer = new LiGeometryRenderer();
     renderer->setGeometry(geometry);
     renderer->setMaterial(mat);
-//    renderer->setType(LiGeometryRenderer::Translucent);
+
+    LiFeature *feature = new LiFeature;
+    feature->setProperty("Who are you?", QString("I'm water."));
+    feature->setProperty("How are you?", QString("I'm fine."));
+    feature->setProperty("Where are you?", QString("I'm working."));
+    renderer->setFeature(feature);
 
     LiEntity *entity = new LiEntity();
     entity->addComponent(renderer);
@@ -1322,4 +1424,21 @@ void flattenTerrain()
 
     GlobalViewer()->scene()->globe()->addFlattenMask(mask);
     GlobalViewer()->scene()->globe()->addFlattenMask(mask2);
+}
+
+void load3DTileset(const QString &uri)
+{
+    Li3DTileset *tileset;
+    LiEntity *entity;
+
+    if (1)
+    {
+        tileset = new Li3DTileset(uri);
+        tileset->setClampedTerrain(false); // 贴地模式 (默认为true)
+//        tileset->setDebugBoundingVolume(true);
+        entity = new LiEntity;
+        entity->addComponent(tileset);
+        GlobalViewer()->scene()->addEntity(entity);
+        flytoTileset(tileset);
+    }
 }
