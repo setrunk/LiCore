@@ -2,11 +2,14 @@
 
 uniform sampler2D batchTexture;
 uniform int batchTextureInstancesPerRow;
+uniform int batchTextureInstanceStride;
 uniform int batchTextureAttributeOffset[8];
 
 ivec2 computeSt(int instanceId, int attributeId)
 {
-    int x = (instanceId % batchTextureInstancesPerRow) + batchTextureAttributeOffset[attributeId];
+    int x = (instanceId % batchTextureInstancesPerRow)
+            * batchTextureInstanceStride 
+            + batchTextureAttributeOffset[attributeId];
     int y = instanceId / batchTextureInstancesPerRow;
     return ivec2(x, y);
 }
