@@ -5,6 +5,16 @@ uniform int batchTextureInstancesPerRow;
 uniform int batchTextureInstanceStride;
 uniform int batchTextureAttributeOffset[8];
 
+vec4 uintToColor(uint rgba)
+{
+    vec4 c;
+    c.x =  rgba        & 0xff;
+    c.y = (rgba >> 8)  & 0xff;
+    c.z = (rgba >> 16) & 0xff;
+    c.w =  rgba >> 24;
+    return c / 255.0;
+}
+
 ivec2 computeSt(int instanceId, int attributeId)
 {
     int x = (instanceId % batchTextureInstancesPerRow)
