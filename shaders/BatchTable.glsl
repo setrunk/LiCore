@@ -15,6 +15,12 @@ vec4 uintToColor(uint rgba)
     return c / 255.0;
 }
 
+vec4 floatToColor(float f)
+{
+    uint rgba = f > 0 ? uint(f) : uint(-f) ^ 0xffffffff;
+    return uintToColor(rgba);
+}
+
 ivec2 computeSt(int instanceId, int attributeId)
 {
     int x = (instanceId % batchTextureInstancesPerRow)
@@ -27,7 +33,7 @@ ivec2 computeSt(int instanceId, int attributeId)
 vec4 sampleBatchTextureColor(int instanceId, int attributeId)
 {
     ivec2 st = computeSt(instanceId, attributeId);
-    vec4 value = uintToColor(uint(texelFetch(batchTexture, st, 0).x));
+    vec4 value = floatToColor(float(texelFetch(batchTexture, st, 0).x));
     return value;
 }
 
