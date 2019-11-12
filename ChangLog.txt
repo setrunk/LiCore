@@ -59,3 +59,11 @@ Change Log
 	* 支持Color, Float, Vec2, Vec3, Vec4类型属性数据；
 	* LiBatchTable.addAttribute函数可以添加任意类型进行混合，最多支持8个属性；
 	* 在Shader中可以根据InstanceId和AttributeId进行属性采样，可以进行对应的属性类型采样；
+
+- 2019-11-12
+
+- Fixed bugs
+	* TextureProjection；
+	* 带有RTC_CENTER的B3DM模型；
+	* BatchTable的颜色属性只支持RGB分量，Alpha分量必须单独添加属性；
+	* LiSceneLoader添加选项值，替换以前使用字符选项的方法；

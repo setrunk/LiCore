@@ -31,35 +31,35 @@ public:
 
     LiTexture *envMapSamplerRefl() const
     {
-        return _envMapSamplerRefl;
+        return m_envMapSamplerRefl;
     }
 
     LiTexture *oceanBumpMapSampler() const
     {
-        return _oceanBumpMapSampler;
+        return m_oceanBumpMapSampler;
     }
 
     LiTexture *foamSampler() const
     {
-        return _foamSampler;
+        return m_foamSampler;
     }
 
     LiTexture *foamSampler2() const
     {
-        return _foamSampler2;
+        return m_foamSampler2;
     }
 
     LiTexture *waterGlossMapSampler() const
     {
-        return _waterGlossMapSampler;
+        return m_waterGlossMapSampler;
     }
 
     bool ready() const
     {
-        return _oceanBumpMapSampler &&
-               _foamSampler &&
-                _foamSampler2 &&
-               _waterGlossMapSampler;
+        return m_oceanBumpMapSampler &&
+               m_foamSampler &&
+                m_foamSampler2 &&
+               m_waterGlossMapSampler;
     }
 
 public slots:
@@ -84,18 +84,18 @@ private:
     float m_softIntersectionFactor = 1.0f;
     float m_reflectionAmount = 0.75f;
     float m_reflectionNoise = 0.038f;
-    float m_whiteCapsAmount = 0.75f;
-    float m_sunMultiplier = 50.0f;
+    float m_whiteCapsAmount = 0.05f;
+    float m_sunMultiplier = 1.0f;
     float m_fresnelScale = 1.5f;
     QColor m_waterColor = QColor(5, 26, 31);
 //    QColor m_waterColor = QColor(31, 82, 88);
 
     LiBuffer *m_uniformBuffer = nullptr;
-    LiTexture *_envMapSamplerRefl = nullptr;
-    LiTexture *_oceanBumpMapSampler = nullptr;
-    LiTexture *_foamSampler = nullptr;
-    LiTexture *_foamSampler2 = nullptr;
-    LiTexture *_waterGlossMapSampler = nullptr;
+    LiTexture *m_envMapSamplerRefl = nullptr;
+    LiTexture *m_oceanBumpMapSampler = nullptr;
+    LiTexture *m_foamSampler = nullptr;
+    LiTexture *m_foamSampler2 = nullptr;
+    LiTexture *m_waterGlossMapSampler = nullptr;
 };
 
 #endif // WATERPARAMETERS_P_H

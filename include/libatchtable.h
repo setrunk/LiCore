@@ -13,7 +13,7 @@ class LICORE_EXPORT LiBatchTable : public LiNode
 public:
     enum ComponentDataType
     {
-        Color,  // QColor
+        Color,  // QColor, alpha is disable
         Float,  // float
         Vec2,   // Vector2 or QVector2D
         Vec3,   // Vector3 or QVector3D
