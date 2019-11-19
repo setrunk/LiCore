@@ -67,3 +67,11 @@ Change Log
 	* 带有RTC_CENTER的B3DM模型；
 	* BatchTable的颜色属性只支持RGB分量，Alpha分量必须单独添加属性；
 	* LiSceneLoader添加选项值，替换以前使用字符选项的方法；
+
+- 2019-11-19
+
+- Fixed bugs
+	* 修复加载3DTile模型卡顿的问题；
+	* 修复加载glTF 1.0模型占用大量内存的问题；
+	* 优化glTF模型文件中的相同材质物体的合并，减少DrawCall的次数；
+	* 增加LiUniformBlock类，用于材质渲染时更新变量的速度；

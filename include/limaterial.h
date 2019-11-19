@@ -129,6 +129,7 @@ public:
 
     Q_INVOKABLE QVariant parameter(const QString &name) const;
     Q_INVOKABLE void setParameter(const QString &name, const QVariant &value);
+    Q_INVOKABLE bool hasParameter(const QString &name) const;
 
     Q_INVOKABLE QVariant parameter(Parameter type) const;
     Q_INVOKABLE void setParameter(Parameter type, const QVariant &value);
@@ -149,6 +150,8 @@ public:
      * @return LiRenderState
      */
     LiRenderState *renderState() const;
+
+    LiNodeChangeBasePtr createChangePtr() const Q_DECL_OVERRIDE;
 
     static LiMaterial *fromType(ShadingModel shadingModel);
 

@@ -149,9 +149,9 @@ public:
         // Optimization statistics
         int numberOfTilesCulledWithChildrenUnion = 0;
         // Memory statistics
-        int geometryByteLength = 0;
-        int texturesByteLength = 0;
-        int batchTableByteLength = 0;
+        int64_t geometryByteLength = 0;
+        int64_t texturesByteLength = 0;
+        int64_t batchTableByteLength = 0;
 
         void clear();
         void updatePointAndFeatureCounts(Li3DTileContent *content, bool decrement, bool load);

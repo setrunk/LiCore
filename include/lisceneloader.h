@@ -31,7 +31,7 @@ public:
 
     Q_INVOKABLE virtual bool isFileTypeSupported(const QUrl &source) const = 0;
     Q_INVOKABLE virtual Future load(const QUrl &source, uint32_t options = 0) = 0;
-    Q_INVOKABLE virtual Future fromBinaryData(const QByteArray &data, uint32_t options = 0) = 0;
+    Q_INVOKABLE virtual Future fromBinaryData(const QByteArray &data, uint32_t options = 0, const QUrl &baseUrl = QUrl()) = 0;
     Q_INVOKABLE virtual LiEntity *scene(int id = 0) = 0;
     Q_INVOKABLE virtual Error error() const { return NoError; }
 

@@ -5,6 +5,7 @@
 
 class LiTexture;
 class LiBuffer;
+class LiUniformBlock;
 
 class LICORE_EXPORT LiWaterParameters : public QObject
 {
@@ -27,7 +28,7 @@ public:
     float fresnelScale() const;
     QColor waterColor() const;
 
-    LiBuffer *uniformBuffer();
+    LiUniformBlock *uniformBlock();
 
     LiTexture *envMapSamplerRefl() const
     {
@@ -90,7 +91,7 @@ private:
     QColor m_waterColor = QColor(5, 26, 31);
 //    QColor m_waterColor = QColor(31, 82, 88);
 
-    LiBuffer *m_uniformBuffer = nullptr;
+    LiUniformBlock *m_uniformBlock = nullptr;
     LiTexture *m_envMapSamplerRefl = nullptr;
     LiTexture *m_oceanBumpMapSampler = nullptr;
     LiTexture *m_foamSampler = nullptr;
